@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - Checkout Page (checkout.html)
+       Features: 
+         - Order summary from localStorage
+         - Payment options: Easypaisa, JazzCash, Bank Accounts
+         - Confirm Order → WhatsApp invoice message
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout – Markhor Collections</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── CHECKOUT PAGE STYLES ──────────────────────────── */
+
+    .checkout-hero {
+      background: var(--navy);
+      padding: 3.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .checkout-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.08;
+      background: repeating-linear-gradient(45deg, rgba(201,168,76,0.1) 0, rgba(201,168,76,0.1) 1px, transparent 0, transparent 50%);
+      background-size: 30px 30px;
+    }
+    .checkout-hero .inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .checkout-steps {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .step {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .step.active { color: var(--gold); }
+    .step-arrow { color: rgba(255,255,255,0.25); font-size: 0.65rem; }
+    .checkout-hero h1 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--white);
+    }
+
+    /* ── CHECKOUT LAYOUT ── */
+    .checkout-layout {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ── ORDER SUMMARY (Left) ── */
+    .order-summary-col {}
+    .order-summary-col h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .order-summary-col h2 i { color: var(--gold); font-size: 1.1rem; }
+
+    /* Cart Items Table */
+    .cart-items-list {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 60px 1fr auto auto;
+      gap: 1rem;
+      padding: 1.25rem;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-light);
+      transition: var(--transition);
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item:hover { background: var(--beige-bg); }
+    .cart-item-img {
+      width: 60px; height: 72px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+    .cart-item-details {}
+    .cart-item-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-transform: capitalize;
+    }
+    .cart-item-meta {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .cart-item-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .cart-item-actions button {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .cart-item-actions button:hover { color: var(--navy); }
+    .cart-item-actions .remove-btn:hover { color: #e53e3e; }
+    .cart-qty-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: 90px;
+    }
+    .cart-qty-btn {
+      width: 28px; height: 30px;
+      background: var(--gray-light);
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+      color: var(--navy);
+    }
+    .cart-qty-btn:hover { background: var(--navy); color: var(--white); }
+    .cart-qty-num {
+      flex: 1;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .cart-item-price {
+      font-family: var(--font-sub);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    /* Empty Cart */
+    .empty-cart {
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--text-light);
+    }
+    .empty-cart i { font-size: 3rem; color: var(--beige); margin-bottom: 1rem; display: block; }
+    .empty-cart p { margin-bottom: 1.5rem; }
+
+    /* Customer Details */
+    .customer-details {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .customer-details h3 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+    }
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .cd-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .cd-field.full { grid-column: span 2; }
+    .cd-field label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+    }
+    .cd-input {
+      padding: 10px 12px;
+      border: 1.5px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .cd-input:focus { border-color: var(--navy); }
+
+    /* ── ORDER TOTALS PANEL (Right) ── */
+    .order-totals-col {}
+    .totals-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+      overflow: hidden;
+      position: sticky;
+      top: 90px;
+    }
+    .totals-header {
+      padding: 1.25rem 1.5rem;
+      background: var(--navy);
+    }
+    .totals-header h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .totals-body { padding: 1.5rem; }
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-light);
+      font-size: 0.85rem;
+    }
+    .totals-row:last-of-type { border-bottom: none; }
+    .totals-row .label { color: var(--text-mid); }
+    .totals-row .value { font-weight: 600; color: var(--text-dark); }
+    .totals-row.total-row {
+      padding: 14px 0;
+      border-top: 2px solid var(--navy);
+    }
+    .totals-row.total-row .label {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .totals-row.total-row .value {
+      font-family: var(--font-sub);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* ── PAYMENT METHOD SELECTOR ── */
+    .payment-section {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--gray-light);
+      padding-top: 1.5rem;
+    }
+    .payment-section h4 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 2px solid var(--gray-light);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--white);
+    }
+    .payment-option:hover { border-color: var(--navy); background: var(--beige-bg); }
+    .payment-option.selected { border-color: var(--navy); background: rgba(13,43,69,0.04); }
+    .payment-option input[type="radio"] {
+      accent-color: var(--navy);
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+    }
+    .payment-logo {
+      width: 44px; height: 28px;
+      border-radius: 4px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .payment-logo.color-easypaisa { background: #00A63F; color: white; }
+    .payment-logo.color-jazz { background: #E40046; color: white; }
+    .payment-logo.color-bank { background: var(--navy); color: white; }
+    .payment-logo-placeholder {
+      width: 44px; height: 28px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .payment-info { flex: 1; }
+    .payment-info .pay-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .payment-info .pay-detail {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      margin-top: 1px;
+    }
+    .payment-selected-info {
+      margin-top: 1rem;
+      padding: 12px;
+      background: var(--beige-bg);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--gold);
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      display: none;
+    }
+    .payment-selected-info.visible { display: block; }
+
+    /* Confirm Order Button */
+    .confirm-order-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 1.5rem;
+      box-shadow: 0 8px 25px rgba(37,211,102,0.35);
+    }
+    .confirm-order-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 35px rgba(37,211,102,0.45);
+    }
+
+    .continue-shopping {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      text-decoration: none;
+    }
+    .continue-shopping:hover { color: var(--navy); }
+
+    @media (max-width: 900px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+      .totals-card { position: static; }
+    }
+    @media (max-width: 540px) {
+      .cart-item { grid-template-columns: 50px 1fr; }
+      .cart-item-price { grid-column: 2; }
+      .details-grid { grid-template-columns: 1fr; }
+      .cd-field.full { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products...">
+        <div class="search-results-dropdown"></div>
+      </div>
+      <a href="checkout.html" class="header-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+      <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── CHECKOUT HERO ─────────────────────────────────────────── -->
+  <!-- Matches screenshot 16 - checkout steps and "Order summary" -->
+  <div class="checkout-hero">
+    <div class="inner">
+      <!-- Step indicator from screenshot 16 -->
+      <div class="checkout-steps">
+        <span class="step active">Order</span>
+        <span class="step-arrow">›</span>
+        <span class="step">Address</span>
+        <span class="step-arrow">›</span>
+        <span class="step">Payment</span>
+      </div>
+      <h1><i class="fas fa-shopping-bag" style="color:var(--gold);margin-right:10px;"></i> Order summary</h1>
+    </div>
+  </div>
+
+  <!-- ── CHECKOUT LAYOUT ────────────────────────────────────────── -->
+  <div class="checkout-layout">
+
+    <!-- ── LEFT COLUMN: ORDER SUMMARY + CUSTOMER DETAILS ── -->
+    <div class="order-summary-col">
+
+      <!-- Cart Items Section -->
+      <h2><i class="fas fa-list"></i> Your Items</h2>
+      <div class="cart-items-list" id="cartItemsList">
+        <!-- Injected by JS -->
+        <div class="empty-cart" id="emptyCartMsg" style="display:none;">
+          <i class="fas fa-shopping-bag"></i>
+          <p>Your cart is empty.</p>
+          <a href="shop.html" class="btn-primary">Start Shopping</a>
+        </div>
+      </div>
+
+      <!-- Customer Details Form -->
+      <div class="customer-details">
+        <h3><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Your Details</h3>
+        <div class="details-grid">
+          <div class="cd-field">
+            <label>Full Name <span style="color:var(--gold)">*</span></label>
+            <input type="text" class="cd-input" id="cdName" placeholder="Your full name" required>
+          </div>
+          <div class="cd-field">
+            <label>Phone Number <span style="color:var(--gold)">*</span></label>
+            <input type="tel" class="cd-input" id="cdPhone" placeholder="+92 300 0000000" required>
+          </div>
+          <div class="cd-field">
+            <label>Email</label>
+            <input type="email" class="cd-input" id="cdEmail" placeholder="Optional">
+          </div>
+          <div class="cd-field">
+            <label>City</label>
+            <input type="text" class="cd-input" id="cdCity" placeholder="Your city">
+          </div>
+          <div class="cd-field full">
+            <label>Delivery Address <span style="color:var(--gold)">*</span></label>
+            <input type="text" class="cd-input" id="cdAddress" placeholder="Full delivery address" required>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT COLUMN: TOTALS + PAYMENT ── -->
+    <div class="order-totals-col">
+      <div class="totals-card">
+        <div class="totals-header">
+          <h3><i class="fas fa-receipt" style="margin-right:8px;"></i> Order Total</h3>
+        </div>
+        <div class="totals-body">
+          <!-- Totals - from screenshot 16 (Subtotal, Taxes, Total) -->
+          <div class="totals-row">
+            <span class="label">Delivery</span>
+            <span class="value">Free</span>
+          </div>
+          <div class="totals-row">
+            <span class="label">Subtotal</span>
+            <span class="value" id="subtotalVal">Rs. 0</span>
+          </div>
+          <div class="totals-row">
+            <span class="label">Taxes</span>
+            <span class="value" id="taxVal">Rs. 0</span>
+          </div>
+          <div class="totals-row total-row">
+            <span class="label">Total</span>
+            <span class="value" id="totalVal">Rs. 0</span>
+          </div>
+
+          <!-- Payment Method Selection -->
+          <div class="payment-section">
+            <h4><i class="fas fa-credit-card" style="margin-right:6px;color:var(--gold);"></i> Payment Method</h4>
+            <div class="payment-methods" id="paymentMethods">
+
+              <!-- Easypaisa -->
+              <label class="payment-option" onclick="selectPayment(this, 'Easypaisa', 'Account: 03XX-XXXXXXX')">
+                <input type="radio" name="payment" value="easypaisa">
+                <div class="payment-logo-placeholder" style="background:#00A63F;">EP</div>
+                <div class="payment-info">
+                  <div class="pay-name">Easypaisa</div>
+                  <div class="pay-detail">Mobile payment via Easypaisa</div>
+                </div>
+              </label>
+
+              <!-- JazzCash -->
+              <label class="payment-option" onclick="selectPayment(this, 'JazzCash', 'Account: 03XX-XXXXXXX')">
+                <input type="radio" name="payment" value="jazzcash">
+                <div class="payment-logo-placeholder" style="background:#E40046;">JC</div>
+                <div class="payment-info">
+                  <div class="pay-name">JazzCash</div>
+                  <div class="pay-detail">Mobile payment via JazzCash</div>
+                </div>
+              </label>
+
+              <!-- Bank Account 1 -->
+              <label class="payment-option" onclick="selectPayment(this, 'Bank Account 1', 'HBL: XXXXXXXXXXXXXXXX')">
+                <input type="radio" name="payment" value="bank1">
+                <div class="payment-logo-placeholder" style="background:var(--navy);">HBL</div>
+                <div class="payment-info">
+                  <div class="pay-name">Bank Account 1</div>
+                  <div class="pay-detail">HBL Bank Transfer</div>
+                </div>
+              </label>
+
+              <!-- Bank Account 2 -->
+              <label class="payment-option" onclick="selectPayment(this, 'Bank Account 2', 'Meezan: XXXXXXXXXXXXXXXX')">
+                <input type="radio" name="payment" value="bank2">
+                <div class="payment-logo-placeholder" style="background:#1a6e3a;">MBL</div>
+                <div class="payment-info">
+                  <div class="pay-name">Bank Account 2</div>
+                  <div class="pay-detail">Meezan Bank Transfer</div>
+                </div>
+              </label>
+            </div>
+
+            <!-- Shows payment details after selection -->
+            <div class="payment-selected-info" id="paymentInfo">
+              Please select a payment method above.
+            </div>
+          </div>
+
+          <!-- CONFIRM ORDER Button → Opens WhatsApp with invoice -->
+          <button class="confirm-order-btn" onclick="confirmOrder()">
+            <i class="fab fa-whatsapp"></i> Confirm Order via WhatsApp
+          </button>
+
+          <a href="shop.html" class="continue-shopping">
+            <i class="fas fa-chevron-left"></i> Continue shopping
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+      <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+        <p>Suite for the Modern Journey.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ============================================================
+       CHECKOUT PAGE JAVASCRIPT
+       - Render cart items from localStorage
+       - Calculate subtotal, tax, total
+       - Payment method selection
+       - Confirm Order → generate invoice → open WhatsApp
+       ============================================================ */
+
+    /* ── ADMIN WHATSAPP ── */
+    /* IMPORTANT: Replace with real admin WhatsApp number */
+    const CHECKOUT_WHATSAPP = '923001234567';
+
+    /* ── SELECTED PAYMENT STATE ── */
+    let selectedPaymentMethod = '';
+    let selectedPaymentDetail = '';
+
+    /* ── RENDER CART ITEMS ── */
+    function renderCartItems() {
+      const cart = getCart();
+      const container = document.getElementById('cartItemsList');
+      const emptyMsg = document.getElementById('emptyCartMsg');
+
+      if (cart.length === 0) {
+        container.innerHTML = '';
+        container.appendChild(emptyMsg);
+        emptyMsg.style.display = 'block';
+        updateTotals([]);
+        return;
+      }
+
+      container.innerHTML = cart.map((item, i) => `
+        <div class="cart-item" id="cartItem${i}">
+          <!-- Product thumbnail -->
+          <img 
+            src="${item.image}" 
+            alt="${item.name}" 
+            class="cart-item-img"
+            loading="lazy"
+          >
+          <!-- Product info - matches screenshot 16 format: "buggy pent - S, black" -->
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-meta">${item.size ? item.size + ', ' : ''}${item.color || ''}</div>
+            <!-- Remove and Save for Later actions like screenshot 16 -->
+            <div class="cart-item-actions">
+              <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
+            </div>
+          </div>
+          <!-- Quantity Control -->
+          <div class="cart-qty-control">
+            <button class="cart-qty-btn" onclick="changeItemQty(${i}, -1)">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="cart-qty-num" id="itemQty${i}">${item.quantity}</span>
+            <button class="cart-qty-btn" onclick="changeItemQty(${i}, 1)">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <!-- Price -->
+          <div class="cart-item-price">
+            Rs. ${(item.price * item.quantity).toLocaleString()}
+          </div>
+        </div>
+      `).join('');
+
+      updateTotals(cart);
+    }
+
+    /* ── REMOVE ITEM ── */
+    function removeItem(index) {
+      removeFromCart(index);
+      renderCartItems();
+    }
+
+    /* ── CHANGE ITEM QUANTITY ── */
+    function changeItemQty(index, delta) {
+      updateCartQuantity(index, delta);
+      renderCartItems();
+    }
+
+    /* ── UPDATE TOTALS ── */
+    function updateTotals(cart) {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const tax = 0; /* Tax is 0.00 as shown in screenshot 16 */
+      const total = subtotal + tax;
+
+      document.getElementById('subtotalVal').textContent = `Rs. ${subtotal.toLocaleString()}`;
+      document.getElementById('taxVal').textContent = `Rs. ${tax.toLocaleString()}`;
+      document.getElementById('totalVal').textContent = `Rs. ${total.toLocaleString()}`;
+    }
+
+    /* ── SELECT PAYMENT METHOD ── */
+    function selectPayment(label, methodName, detail) {
+      /* Remove selected from all options */
+      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+      /* Add selected to clicked option */
+      label.classList.add('selected');
+      selectedPaymentMethod = methodName;
+      selectedPaymentDetail = detail;
+
+      /* Show payment details */
+      const infoEl = document.getElementById('paymentInfo');
+      infoEl.classList.add('visible');
+      infoEl.textContent = `${methodName} — ${detail}`;
+    }
+
+    /* ── CONFIRM ORDER → WHATSAPP INVOICE ── */
+    /* 
+       This function:
+       1. Validates the form
+       2. Generates a detailed invoice string
+       3. Opens WhatsApp with the invoice pre-filled as a message
+       Admin can then manually process the payment.
+    */
+    function confirmOrder() {
+      const cart = getCart();
+      if (cart.length === 0) {
+        showToast('⚠️ Your cart is empty!');
+        return;
+      }
+
+      /* Get customer details */
+      const name = document.getElementById('cdName').value.trim();
+      const phone = document.getElementById('cdPhone').value.trim();
+      const email = document.getElementById('cdEmail').value.trim();
+      const city = document.getElementById('cdCity').value.trim();
+      const address = document.getElementById('cdAddress').value.trim();
+
+      /* Validate required fields */
+      if (!name) { showToast('⚠️ Please enter your full name.'); return; }
+      if (!phone) { showToast('⚠️ Please enter your phone number.'); return; }
+      if (!address) { showToast('⚠️ Please enter your delivery address.'); return; }
+      if (!selectedPaymentMethod) { showToast('⚠️ Please select a payment method.'); return; }
+
+      /* Calculate total */
+      const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+      /* Build invoice string for WhatsApp */
+      const orderDate = new Date().toLocaleDateString('en-PK', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+
+      let itemsText = '';
+      cart.forEach((item, i) => {
+        itemsText += `  ${i + 1}. ${item.name} (${item.size || 'N/A'}, ${item.color || 'N/A'}) x${item.quantity} = Rs. ${(item.price * item.quantity).toLocaleString()}\n`;
+      });
+
+      const invoice =
+        `🛍️ *NEW ORDER — Markhor Collections*\n` +
+        `📅 Date: ${orderDate}\n` +
+        `─────────────────────────\n\n` +
+        `👤 *CUSTOMER DETAILS*\n` +
+        `Name: ${name}\n` +
+        `Phone: ${phone}\n` +
+        `Email: ${email || 'Not provided'}\n` +
+        `City: ${city || 'Not provided'}\n` +
+        `Address: ${address}\n\n` +
+        `🛒 *ORDER ITEMS*\n` +
+        `${itemsText}\n` +
+        `─────────────────────────\n` +
+        `💰 Subtotal: Rs. ${subtotal.toLocaleString()}\n` +
+        `🚚 Delivery: FREE\n` +
+        `💵 *TOTAL: Rs. ${subtotal.toLocaleString()}*\n\n` +
+        `💳 *PAYMENT METHOD*\n` +
+        `${selectedPaymentMethod} — ${selectedPaymentDetail}\n\n` +
+        `Please confirm and provide payment details. Thank you!`;
+
+      /* Open WhatsApp with pre-filled invoice */
+      const waLink = `https://wa.me/${CHECKOUT_WHATSAPP}?text=${encodeURIComponent(invoice)}`;
+      window.open(waLink, '_blank');
+
+      showToast('✓ WhatsApp opened with your order details!');
+    }
+
+    /* ── INIT ── */
+    renderCartItems();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - Home Page (index.html)
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markhor Collections – Suite for the Modern Journey</title>
+  <meta name="description" content="Markhor Collections creates clothing that blends style, quality, and responsibility. Discover our premium men's collection.">
+  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── HOME PAGE SPECIFIC STYLES ─────────────────────────── */
+
+    /* ── HERO PARALLAX BANNER ── */
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--navy-dark);
+    }
+    .hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%; 
+  height: 100%;
+  
+  /* MAGIC YAHAN HAI: center 75% (Is se dukan bhi dikhegi aur logo bhi) */
+  background: url('assets/mainimage.jpeg') center 75% / cover no-repeat;
+  
+  opacity: 0.35; 
+}
+
+/* Diagonal overlay */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(35, 54, 71, 0.02) 40%, rgba(201,168,76,0.15) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+}
+    .hero-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s 0.2s ease forwards;
+      opacity: 0;
+    }
+ /* ── ALL GOLD ELEGANT TITLE ── */
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 6.5vw, 5rem); /* Size thoda balance kiya for elegance */
+  font-weight: 800; /* Bohat zyada heavy nahi taake font ki shape nazar aaye */
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  text-align: center;
+  animation: fadeInUp 1s 0.4s ease forwards;
+  opacity: 0;
+}
+
+.all-gold-glow {
+  display: block; /* Poori line cover karega */
+  
+  /* Luxury Liquid Gold Gradient */
+  background: linear-gradient(
+    to right, 
+    #BF953F 0%, 
+    #FCF6BA 25%, 
+    #B38728 50%, 
+    #FBF5B7 75%, 
+    #AA771C 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Multi-layered Gold Glow (For Depth) */
+  filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.2)) 
+          drop-shadow(0 0 20px rgba(184, 151, 90, 0.4));
+  
+  /* Smooth Shimmer Animation */
+  animation: liquidGold 5s linear infinite;
+  
+  /* Font Styling */
+  letter-spacing: -0.01em;
+  word-spacing: 0.1em;
+}
+
+/* ── ANIMATIONS ── */
+
+/* Liquid Shimmer Effect */
+@keyframes liquidGold {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Standard Fade In */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtitle Adjustments */
+.hero-subtitle {
+  font-family: var(--font-sub);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.75);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  animation: fadeInUp 1s 0.7s ease forwards;
+  opacity: 0;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1.5rem; /* Gap thoda badhaya */
+  justify-content: center;
+  flex-wrap: wrap;
+  /* Entry Animation */
+  animation: fadeInUp 0.8s 0.8s ease forwards;
+  opacity: 0;
+}
+
+/* ── ANIMATION KEYFRAMES ── */
+
+/* Sone ki chamak move karne ke liye */
+@keyframes shineGold {
+  to { background-position: 200% center; }
+}
+
+/* Halka sa glow barhne aur kam hone ke liye (Premium feel) */
+@keyframes softPulse {
+  from { filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.2)); }
+  to { filter: drop-shadow(0 0 20px rgba(201, 168, 76, 0.5)); }
+}
+
+/* Entry Animation (Preserved from your code) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: fadeInUp 1s 1.2s ease forwards;
+      opacity: 0;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ── PHILOSOPHY SECTION ── */
+    .philosophy-section {
+      padding: 7rem 2rem;
+      background: var(--beige-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Geometric background decoration */
+    .philosophy-section::before {
+      content: '';
+      position: absolute;
+      right: -100px; top: -100px;
+      width: 500px; height: 500px;
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 50%;
+    }
+    .philosophy-section::after {
+      content: '';
+      position: absolute;
+      right: -50px; top: -50px;
+      width: 300px; height: 300px;
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 50%;
+    }
+    .philosophy-grid {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .philosophy-text .section-label { margin-bottom: 1rem; }
+    .philosophy-text blockquote {
+      font-family: var(--font-sub);
+      font-size: 1.6rem;
+      font-style: italic;
+      color: var(--navy);
+      line-height: 1.5;
+      border-left: 3px solid var(--gold);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+    .philosophy-text p {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.9;
+    }
+    .philosophy-image {
+      position: relative;
+    }
+    .philosophy-image img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+    /* Decorative gold frame */
+    .philosophy-image::before {
+      content: '';
+      position: absolute;
+      top: -12px; left: -12px;
+      right: 12px; bottom: 12px;
+      border: 2px solid var(--gold);
+      border-radius: var(--radius-lg);
+      z-index: 0;
+    }
+    .philosophy-image img { position: relative; z-index: 1; }
+
+    /* ── WHAT WE OFFER ── */
+    /* ── OFFER SECTION (Updated to Peach & Static Look) ── */
+.offer-section {
+  padding: 7rem 2rem;
+  background: var(--off-white); /* Section background ko halka off-white rakha hai */
+}
+
+.offer-section .section-header { 
+  text-align: center; 
+  margin-bottom: 4rem;
+}
+
+.offer-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px; /* Boxes ke darmiyan thoda gap diya hai taake peach color pop kare */
+  border: none; /* Purana border khatam */
+  border-radius: var(--radius-lg);
+  overflow: visible; /* Shadow dikhane ke liye visible rakha */
+}
+
+.offer-item {
+  padding: 3.5rem 2.5rem;
+  /* Peach Color Shade (#F7E7CE - Luxury Champagne Peach) */
+  background: #F7E7CE; 
+  border-radius: var(--radius-md);
+  position: relative;
+  text-align: center; /* Content center kar diya mazeed safayi ke liye */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* Bohat halki shadow premium look ke liye */
+  border: 1px solid rgba(201, 168, 76, 0.15); /* Halka sa goldish border */
+  transition: none; /* Saari transitions khatam */
+}
+
+/* Hover effects bilkul khatam kar diye hain */
+.offer-item:hover {
+  background: #F7E7CE; /* Background waisa hi rahega */
+  transform: none;
+}
+
+.offer-item::before {
+  display: none; /* Bottom line effect khatam */
+}
+
+.offer-item:last-child { 
+  border-right: 1px solid rgba(201, 168, 76, 0.15); 
+}
+
+.offer-icon {
+  font-size: 3rem;
+  color: var(--navy); /* Yeh wahi blackish color hai jo humne set kiya tha */
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.offer-item h3 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.02em;
+}
+
+.offer-item p { 
+  font-size: 0.9rem; 
+  color: var(--text-mid); 
+  line-height: 1.8; 
+  opacity: 0.85;
+}
+
+/* Responsive adjustment */
+@media (max-width: 900px) {
+  .offer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+    /* ── FEATURED PRODUCTS ── */
+    .featured-section {
+      padding: 7rem 2rem;
+      background: var(--white);
+    }
+    .featured-section .section-header {
+      max-width: var(--max-width);
+      margin: 0 auto 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .featured-slider-wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      position: relative;
+    }
+    .featured-slider {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      transition: var(--transition);
+    }
+
+    /* ── CUSTOMER BENEFITS ── */
+    .benefits-section {
+      padding: 6rem 2rem;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Gold geometric decoration */
+    .benefits-section::before {
+      content: '';
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 400px; height: 400px;
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 50%;
+    }
+    .benefits-section .section-header { text-align: center; margin-bottom: 4rem; }
+    .benefits-section .section-label { color: var(--gold); }
+    .benefits-grid {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .benefit-card {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.04);
+      transition: var(--transition);
+      backdrop-filter: blur(8px);
+    }
+    .benefit-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      background: rgba(201,168,76,0.06);
+      transform: translateY(-5px);
+    }
+    .benefit-icon-wrap {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.6rem;
+      color: var(--white);
+      box-shadow: var(--shadow-gold);
+      transition: var(--transition);
+    }
+    .benefit-card:hover .benefit-icon-wrap { transform: scale(1.1) rotate(5deg); }
+    .benefit-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .benefit-card p { font-size: 0.82rem; color: rgba(255,255,255,0.6); line-height: 1.8; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section {
+      padding: 7rem 2rem;
+      background: var(--beige-bg);
+      overflow: hidden;
+    }
+    .testimonials-section .section-header { text-align: center; margin-bottom: 4rem; }
+    .testimonial-slider-container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .testimonial-slide {
+      display: none;
+      animation: fadeInUp 0.5s ease;
+    }
+    .testimonial-slide.active { display: block; }
+    .testimonial-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      font-family: var(--font-heading);
+      font-size: 8rem;
+      color: var(--gold);
+      opacity: 0.15;
+      position: absolute;
+      top: -1rem; left: 1.5rem;
+      line-height: 1;
+    }
+    .testimonial-quote {
+      font-family: var(--font-sub);
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--navy);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-author {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .testimonial-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--gold);
+    }
+    .testimonial-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--navy);
+    }
+    .testimonial-stars { color: var(--gold); font-size: 0.85rem; }
+    .testimonial-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .testimonial-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--navy);
+      background: transparent;
+      color: var(--navy);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .testimonial-btn:hover { background: var(--navy); color: var(--white); }
+    .testimonial-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+    }
+    .t-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(13,43,69,0.2);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .t-dot.active { background: var(--gold); transform: scale(1.3); }
+
+    /* ── FAQ ── */
+    .faq-section {
+      padding: 7rem 2rem;
+      background: var(--white);
+    }
+    .faq-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .faq-left .section-title { margin-bottom: 1.5rem; }
+    .faq-left p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 2rem; }
+    .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item {
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .faq-item.open { border-color: var(--gold); box-shadow: var(--shadow-gold); }
+    .faq-question {
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: var(--transition);
+      gap: 1rem;
+    }
+    .faq-item.open .faq-question { color: var(--navy); background: var(--beige-bg); }
+    .faq-chevron {
+      font-size: 0.75rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      transition: transform 0.35s ease;
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      line-height: 1.9;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 1.5rem 1.25rem; }
+
+    /* ── STORE STRIP ── */
+    .store-strip {
+      background: var(--navy);
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .store-strip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=60') center/cover no-repeat;
+      opacity: 0.08;
+    }
+    .store-strip .content { position: relative; z-index: 1; }
+    .store-strip h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .store-strip p {
+      font-family: var(--font-sub);
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+      margin-left: auto; margin-right: auto;
+    }
+
+    /* Responsive home page */
+    @media (max-width: 1024px) {
+      .philosophy-grid, .offer-grid { grid-template-columns: 1fr; }
+      .faq-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .featured-slider { grid-template-columns: repeat(2, 1fr); }
+      .benefits-grid { grid-template-columns: 1fr 1fr; }
+      .offer-grid { border: 1px solid var(--gray-light); }
+      .offer-item { border-right: none; border-bottom: 1px solid var(--gray-light); }
+    }
+    @media (max-width: 640px) {
+      .featured-slider { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .featured-section .section-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .faq-inner { gap: 2rem; }
+      .testimonial-card { padding: 2rem 1.5rem; }
+      .store-strip { padding: 3.5rem 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.2rem; }
+      .philosophy-section, .offer-section, .featured-section,
+      .benefits-section, .testimonials-section, .faq-section { padding: 4rem 1.25rem; }
+      .offer-item { padding: 2rem 1.5rem; }
+      .benefit-card { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── ANNOUNCEMENT BAR ─────────────────────────────────────── -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ───────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <!-- Logo -->
+      <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+
+      <!-- Navigation Links -->
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- Search Bar with Dropdown -->
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products..." aria-label="Search products">
+        <div class="search-results-dropdown"></div>
+      </div>
+
+      <!-- Cart Icon with Badge -->
+      <a href="checkout.html" class="header-cart" title="View Cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+
+      <!-- Contact Us Button -->
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+
+    <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── HERO PARALLAX SECTION ─────────────────────────────────── -->
+  <section class="hero-section">
+    <!-- Parallax Background (moves slower than scroll) -->
+    <div class="hero-bg" data-parallax="0.3"></div>
+
+    <div class="hero-content">
+   <div class="hero-text">
+  <h1 class="hero-title">
+    <span class="all-gold-glow">Welcome to Markhor Collections</span>
+  </h1>
+</div>
+      <div class="hero-ctas">
+        <a href="shop.html" class="btn-primary gold-variant">
+          <i class="fas fa-shopping-bag"></i> Shop Now
+        </a>
+        <a href="about.html" class="btn-outline white-variant">
+          Our Story <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ── OUR PHILOSOPHY SECTION ────────────────────────────────── -->
+  <!-- Text extracted exactly from reference screenshots -->
+  <section class="philosophy-section">
+    <div class="philosophy-grid">
+      <!-- Left: Text Content -->
+      <div class="philosophy-text reveal-left">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Crafted with<br>Purpose &amp; Soul</h2>
+        <div class="gold-divider"></div>
+        <blockquote>
+          "Style that respects people and the planet."
+        </blockquote>
+        <!-- Exact text from screenshot 2 -->
+        <p>
+          Markhor Collection creates clothing that blends style, quality, and responsibility. 
+          We believe in making clothes that look good, feel good, and are made with respect 
+          for people and the planet. Our designs are inspired by strength and elegance, 
+          offering timeless pieces for everyone while staying committed to ethical practices 
+          and sustainability.
+        </p>
+        <br>
+      </div>
+
+      <!-- Right: Logo Image -->
+      <div class="philosophy-image reveal-right">
+        <!-- Markhor logo image from screenshot 2 -->
+        <img 
+          src="assets/5logo.jpeg" 
+          alt="Markhor Collections Philosophy"
+          loading="lazy"
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="offer-section">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Curated for Every Man</h2>
+        <div class="gold-divider centered"></div>
+        <p class="section-subtitle">Premium everyday essentials and bold streetwear for the modern wardrobe</p>
+      </div>
+
+      <div class="offer-grid reveal">
+        <div class="offer-item">
+          <img src="assets/2.jpeg" alt="Men's Essentials" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+          
+          <span class="offer-icon"><i class="fas fa-tshirt"></i></span>
+          <h3>Men's Essentials</h3>
+          <p>
+            We offer a modern collection of men's clothing designed for style, comfort, and confidence. 
+            Our range includes premium everyday essentials like high-quality T-shirts, jeans, and casual shirts.
+          </p>
+        </div>
+
+        <div class="offer-item">
+          <img src="assets/3.jpeg" alt="Bold Streetwear" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+          
+          <span class="offer-icon"><i class="fas fa-layer-group"></i></span>
+          <h3>Bold Streetwear</h3>
+          <p>
+            For those who prefer a bold look, we provide trend-driven streetwear pieces such as oversized 
+            T-shirts, cargo pants, and statement jackets. Each collection is crafted with attention to detail, 
+            quality fabrics, and a perfect fit.
+          </p>
+        </div>
+
+        <div class="offer-item">
+          <img src="assets/4.jpeg" alt="Accessories" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+          
+          <span class="offer-icon"><i class="fas fa-gem"></i></span>
+          <h3>Accessories</h3>
+          <p>
+            We also offer stylish accessories to complete every outfit, making us a one-stop destination 
+            for the modern man's wardrobe. Every detail matters.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURED PRODUCTS ─────────────────────────────────────── -->
+  <section class="featured-section">
+    <div class="featured-section">
+      <div class="section-header reveal">
+        <div>
+          <span class="section-label">Featured</span>
+          <h2 class="section-title">Men's Collection</h2>
+        </div>
+        <a href="shop.html" class="btn-outline">View All <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="featured-slider-wrap">
+        <div class="featured-slider" id="featuredSlider">
+          <!-- Product cards injected by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CUSTOMER BENEFITS ─────────────────────────────────────── -->
+  <!-- Exact section from screenshot 5 -->
+  <section class="benefits-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Why Choose Us</span>
+        <h2 class="section-title light">Customer benefits</h2>
+        <div class="gold-divider centered"></div>
+        <p style="color:rgba(255,255,255,0.6);font-family:var(--font-sub);font-style:italic;font-size:1.05rem;">
+          Enjoy these added advantages with every purchase
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <!-- Fast Delivery -->
+        <div class="benefit-card reveal delay-1">
+          <div class="benefit-icon-wrap">
+            <i class="fas fa-truck"></i>
+          </div>
+          <h3>Fast Delivery</h3>
+          <!-- Exact text from screenshot 5 -->
+          <p>Get your clothing delivered quickly.</p>
+        </div>
+
+        <!-- Order Tracking -->
+        <div class="benefit-card reveal delay-2">
+          <div class="benefit-icon-wrap">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <h3>Order Tracking</h3>
+          <!-- Exact text from screenshot 5 -->
+          <p>Track your order in real-time, anytime.</p>
+        </div>
+
+        <!-- 24/7 Support -->
+        <div class="benefit-card reveal delay-3">
+          <div class="benefit-icon-wrap">
+            <i class="fas fa-life-ring"></i>
+          </div>
+          <h3>24/7 Support</h3>
+          <!-- Exact text from screenshot 5 -->
+          <p>We're here to help you, day and night.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS SLIDER ───────────────────────────────────── -->
+  <!-- From screenshot 5 - "Dress is both stylish and super comfy!" - Asad Khan -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Testimonials</span>
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="gold-divider centered"></div>
+      </div>
+
+      <div class="testimonial-slider-container">
+        <!-- Slide 1: Asad Khan - from screenshot 5 -->
+        <div class="testimonial-slide active">
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"Dress is both stylish and super comfy!"</p>
+            <div class="testimonial-author">
+              <img 
+                src="assets/Asadkhan.jpeg" 
+                alt="Asad Khan" 
+                class="testimonial-avatar"
+              >
+              <span class="testimonial-name">Asad Khan</span>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"The quality is unmatched. Markhor Collections has completely transformed my wardrobe!"</p>
+            <div class="testimonial-author">
+              <img 
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" 
+                alt="Zubair Ahmed" 
+                class="testimonial-avatar"
+              >
+              <span class="testimonial-name">Zubair Ahmed</span>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"Fast delivery, beautiful packaging, and the clothes look even better in person. Highly recommend!"</p>
+            <div class="testimonial-author">
+              <img 
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80" 
+                alt="Hassan Malik" 
+                class="testimonial-avatar"
+              >
+              <span class="testimonial-name">Hassan Malik</span>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="testimonial-controls">
+          <button class="testimonial-btn" id="tPrev"><i class="fas fa-chevron-left"></i></button>
+          <button class="testimonial-btn" id="tNext"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="testimonial-dots">
+          <div class="t-dot active" data-index="0"></div>
+          <div class="t-dot" data-index="1"></div>
+          <div class="t-dot" data-index="2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ SECTION ───────────────────────────────────────────── -->
+  <!-- From screenshot 6 - exact questions used -->
+  <section class="faq-section">
+    <div class="faq-inner">
+      <!-- Left side header -->
+      <div class="reveal-left">
+        <span class="section-label">Help Center</span>
+        <h2 class="section-title">Frequently asked<br>questions</h2>
+        <div class="gold-divider"></div>
+        <p>Can't find your answer? Reach out to our support team and we'll be happy to assist you.</p>
+        <a href="contact.html" class="btn-primary" style="margin-top:1.5rem;">
+          <i class="fas fa-envelope"></i> Contact Support
+        </a>
+      </div>
+
+      <!-- Right side accordions -->
+      <div class="faq-list reveal-right">
+        <!-- FAQ 1 - from screenshot 6 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            What products does your clothing store offer?
+            <i class="fas fa-chevron-down faq-chevron"></i>
+          </button>
+          <div class="faq-answer">
+            We offer a wide range of men's clothing including premium T-shirts, buggy pants, jeans, casual shirts, statement jackets, and stylish accessories. Our collection is designed for style, comfort, and confidence. Women's and Kids' collections are coming soon!
+          </div>
+        </div>
+
+        <!-- FAQ 2 - from screenshot 6 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            How can I contact customer support?
+            <i class="fas fa-chevron-down faq-chevron"></i>
+          </button>
+          <div class="faq-answer">
+            You can reach us via our Contact Us page, through WhatsApp, or by email. Our support team is available 24/7 to assist you with any queries or concerns.
+          </div>
+        </div>
+
+        <!-- FAQ 3 - from screenshot 6 (with answer visible) -->
+        <div class="faq-item open">
+          <button class="faq-question">
+            What is your return policy?
+            <i class="fas fa-chevron-down faq-chevron"></i>
+          </button>
+          <!-- Exact answer from screenshot 6 -->
+          <div class="faq-answer">
+            Products must be in their original condition, unworn, and include the receipt or proof of purchase. Refunds are processed within 5-7 business days of receiving the returned item.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            How long does delivery take?
+            <i class="fas fa-chevron-down faq-chevron"></i>
+          </button>
+          <div class="faq-answer">
+            Standard shipping takes 2-3 business days. We offer fast delivery so you can enjoy your new clothing as quickly as possible. Real-time order tracking is available for all orders.
+          </div>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            Do you offer size exchanges?
+            <i class="fas fa-chevron-down faq-chevron"></i>
+          </button>
+          <div class="faq-answer">
+            Yes! We offer size exchanges within 7 days of receiving your order, provided the item is unworn and in its original condition. Contact our support team to initiate an exchange.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STORE CTA STRIP ────────────────────────────────────────── -->
+  <section class="store-strip">
+    <div class="content">
+      <span class="section-label" style="justify-content:center;display:flex;">Ready to Shop?</span>
+      <h2>Explore the Full Collection</h2>
+      <p>Discover premium clothing that combines elegance with everyday wearability.</p>
+      <a href="shop.html" class="btn-primary gold-variant" style="font-size:0.85rem;padding:16px 40px;">
+        <i class="fas fa-shopping-bag"></i> Shop Now
+      </a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+  <a href="index.html" class="header-logo" style="margin-bottom:1rem; display: flex; align-items: center; text-decoration: none;">
+    
+    <img src="assets/logo.png" alt="Markhor Logo" style="width: 70px; height: auto; margin-right: 15px; object-fit: contain;">
+    
+    <div class="logo-text">
+      <span class="brand-name">Markhor</span>
+      <span class="brand-tagline">Collections</span>
+    </div>
+  </a>
+  <p>Suite for the Modern Journey. Premium clothing that blends style, quality, and responsibility.</p>
+</div>
+
+      <!-- Customer Care Column - exact links from screenshot 6 & 8 -->
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="#">Shipping</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <!-- Info Column -->
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Size Guide</a>
+        <a href="checkout.html">Your Cart</a>
+      </div>
+    </div>
+
+    <!-- Footer Bottom Bar -->
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+    </div>
+  </footer>
+
+  <!-- Shared Scripts -->
+  <script src="main.js"></script>
+
+  <!-- ── HOME PAGE SPECIFIC SCRIPTS ─────────────────────────────── -->
+  <script>
+    /* ── RENDER FEATURED PRODUCTS ── */
+    /* Pulls from global PRODUCTS array in main.js */
+    function renderFeaturedProducts() {
+      const grid = document.getElementById('featuredSlider');
+      if (!grid) return;
+
+      grid.innerHTML = PRODUCTS.map(p => `
+        <!-- Product Card for ${p.name} -->
+        <div class="product-card reveal delay-${PRODUCTS.indexOf(p) + 1}">
+          <a href="product.html?id=${p.id}">
+            <div class="card-img-wrap">
+              <img src="${p.image}" alt="${p.name}" loading="lazy">
+              ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+              <div class="card-actions">
+                <!-- Quick add to cart with default S, black -->
+                <button class="card-action-btn" title="Quick Add to Cart"
+                  onclick="event.preventDefault(); addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+                  <i class="fas fa-shopping-bag"></i>
+                </button>
+                <button class="card-action-btn" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-info">
+              <div class="card-category">Men's Collection</div>
+              <div class="card-name">${p.name}</div>
+              <div class="card-price"><span class="currency">Rs. </span>${p.price.toLocaleString()}</div>
+            </div>
+          </a>
+          <button class="card-add-btn" 
+            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+            <i class="fas fa-plus"></i> Add to Cart
+          </button>
+        </div>
+      `).join('');
+
+      // Re-init reveal animations for new elements
+      initRevealAnimations();
+    }
+    renderFeaturedProducts();
+
+    /* ── TESTIMONIAL SLIDER ── */
+    let currentTestimonial = 0;
+    const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+    const testimonialDots = document.querySelectorAll('.t-dot');
+
+    function showTestimonial(index) {
+      testimonialSlides.forEach(s => s.classList.remove('active'));
+      testimonialDots.forEach(d => d.classList.remove('active'));
+      currentTestimonial = (index + testimonialSlides.length) % testimonialSlides.length;
+      testimonialSlides[currentTestimonial].classList.add('active');
+      testimonialDots[currentTestimonial].classList.add('active');
+    }
+
+    document.getElementById('tPrev')?.addEventListener('click', () => showTestimonial(currentTestimonial - 1));
+    document.getElementById('tNext')?.addEventListener('click', () => showTestimonial(currentTestimonial + 1));
+    testimonialDots.forEach(dot => {
+      dot.addEventListener('click', () => showTestimonial(parseInt(dot.dataset.index)));
+    });
+    // Auto-advance testimonials every 5 seconds
+    setInterval(() => showTestimonial(currentTestimonial + 1), 5000);
+
+    /* ── FAQ ACCORDION ── */
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        // Close all open items first
+        document.querySelectorAll('.faq-item.open').forEach(openItem => {
+          openItem.classList.remove('open');
+        });
+        // Toggle clicked item
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>

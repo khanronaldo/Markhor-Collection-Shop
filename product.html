@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - Product Detail Page (product.html)
+       Features: Product zoom, size/color selector, quantity 
+                 increment/decrement, Add to Cart, Specifications
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product – Markhor Collections</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── PRODUCT PAGE STYLES ───────────────────────────── */
+
+    .product-page {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    /* Breadcrumb Navigation */
+    .product-breadcrumb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .product-breadcrumb a { color: var(--navy); }
+    .product-breadcrumb a:hover { color: var(--gold); }
+    .product-breadcrumb span { color: var(--text-light); }
+
+    /* ── PRODUCT MAIN LAYOUT ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* ── LEFT: IMAGE SECTION ── */
+    .product-image-section {}
+    .product-main-image {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--gray-light);
+      cursor: zoom-in;
+      box-shadow: var(--shadow-lg);
+    }
+    .product-main-image img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+    /* Zoom effect on hover */
+    .product-main-image:hover img { transform: scale(1.08); }
+    .product-main-image .zoom-hint {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      background: rgba(255,255,255,0.9);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .product-main-image:hover .zoom-hint { opacity: 1; }
+
+    /* ── RIGHT: PRODUCT INFO ── */
+    .product-info-section {}
+    .product-name {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      text-transform: capitalize;
+    }
+    .product-price-display {
+      font-family: var(--font-sub);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+    .product-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--gray-light);
+      margin: 1.5rem 0;
+    }
+
+    /* Size Selector */
+    .option-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .size-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .size-btn {
+      width: 44px; height: 44px;
+      border: 2px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .size-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .size-btn.selected { border-color: var(--navy); background: var(--navy); color: var(--white); }
+
+    /* Color Selector */
+    .color-options {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .color-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 2px solid var(--gray-light);
+      border-radius: 50px;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: var(--transition);
+      text-transform: capitalize;
+    }
+    .color-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .color-btn.selected { border-color: var(--navy); background: var(--navy); color: var(--white); }
+    .color-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* Quantity Selector */
+    .quantity-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px; height: 44px;
+      background: var(--gray-light);
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .qty-btn:hover { background: var(--navy); color: var(--white); }
+    .qty-display {
+      width: 52px; height: 44px;
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      outline: none;
+      background: var(--white);
+      color: var(--text-dark);
+    }
+
+    /* Add to Cart Row */
+    .add-cart-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .add-cart-btn {
+      flex: 1;
+      min-width: 180px;
+      background: var(--navy);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 16px 24px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .add-cart-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-gold);
+    }
+    /* Pulse animation on Add to Cart */
+    .add-cart-btn.added { animation: pulse-gold 0.5s ease; }
+
+    /* Product Meta */
+    .product-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+    .product-meta span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .product-meta i { color: var(--gold); width: 16px; }
+    .product-meta a { color: var(--navy); text-decoration: underline; }
+
+    /* ── SPECIFICATIONS TABLE ── */
+    .product-specs-section {
+      margin-top: 5rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--gray-light);
+    }
+    .specs-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--text-dark);
+      margin-bottom: 1.5rem;
+    }
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .specs-table tr {
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .specs-table td {
+      padding: 14px 0;
+      font-size: 0.85rem;
+    }
+    .specs-table td:first-child {
+      color: var(--text-light);
+      width: 200px;
+      font-weight: 600;
+    }
+    .specs-table td:last-child { color: var(--text-dark); }
+
+    /* ── RELATED PRODUCTS ── */
+    .related-section {
+      padding: 5rem 2rem;
+      background: var(--beige-bg);
+    }
+    .related-section .container { max-width: var(--max-width); margin: 0 auto; }
+    .related-section .section-header { margin-bottom: 2rem; }
+
+    @media (max-width: 900px) {
+      .product-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    @media (max-width: 480px) {
+      .add-cart-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+       <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link active">Shop</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products...">
+        <div class="search-results-dropdown"></div>
+      </div>
+      <a href="checkout.html" class="header-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+      <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── PRODUCT DETAIL ─────────────────────────────────────────── -->
+  <div class="product-page">
+
+    <!-- Breadcrumb - from screenshot 14 -->
+    <nav class="product-breadcrumb" id="productBreadcrumb">
+      <a href="shop.html">All products</a>
+      <span>/</span>
+      <a href="shop.html?category=men">Men</a>
+      <span>/</span>
+      <a href="shop.html?category=men">pents</a>
+      <span>/</span>
+      <span id="breadcrumbProduct">Loading...</span>
+    </nav>
+
+    <!-- Product Detail Grid -->
+    <div class="product-grid" id="productGrid">
+      <!-- Injected by JS -->
+      <div style="text-align:center;padding:4rem;color:var(--text-light);">Loading product...</div>
+    </div>
+
+    <!-- Specifications Section - from screenshot 15 -->
+    <div class="product-specs-section" id="specificationsSection" style="display:none;">
+      <h2 class="specs-title">Specifications</h2>
+      <table class="specs-table" id="specsTable"></table>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <section class="related-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">You May Also Like</span>
+        <h2 class="section-title">Related Products</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="products-grid" id="relatedGrid"></div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+        <p>Suite for the Modern Journey.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="#">Shipping</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+      <span>Designed with ♥</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ============================================================
+       PRODUCT DETAIL PAGE JAVASCRIPT
+       - Load product from URL ?id= param
+       - Handle size/color/quantity selection
+       - Add to Cart with selected options
+       - Render specifications table
+       - Render related products
+       ============================================================ */
+
+    /* ── COLOR DOTS MAP ── */
+    /* Maps color names to CSS values */
+    const COLOR_MAP = {
+      'black': '#111111',
+      'white': '#f5f5f5',
+      'blue': '#3b6cc5',
+      'dark blue': '#1a2d6e',
+      'gray': '#888888',
+      'cream': '#f5edd8'
+    };
+
+    /* ── PRODUCT STATE ── */
+    let currentProduct = null;
+    let selectedSize = '';
+    let selectedColor = '';
+    let quantity = 1;
+
+    /* ── LOAD PRODUCT FROM URL PARAM ── */
+    function loadProduct() {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('id');
+
+      // Find product in PRODUCTS array (from main.js)
+      currentProduct = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0];
+
+      if (!currentProduct) {
+        document.getElementById('productGrid').innerHTML = '<p>Product not found. <a href="shop.html">Back to Shop</a></p>';
+        return;
+      }
+
+      // Default selections
+      selectedSize = currentProduct.sizes[0];
+      selectedColor = currentProduct.colors[0];
+
+      // Update page title
+      document.title = `${currentProduct.name} – Markhor Collections`;
+
+      // Update breadcrumb
+      document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
+
+      // Render the product detail HTML
+      renderProductDetail();
+      renderSpecifications();
+      renderRelatedProducts();
+    }
+
+    /* ── RENDER PRODUCT DETAIL ── */
+    function renderProductDetail() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = `
+        <!-- LEFT: Product Image with Zoom -->
+        <div class="product-image-section reveal-left">
+          <div class="product-main-image" id="productImageWrap">
+            <img src="${currentProduct.image}" alt="${currentProduct.name}" id="productMainImg">
+            <div class="zoom-hint">
+              <i class="fas fa-search-plus"></i> Hover to zoom
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Product Info -->
+        <div class="product-info-section reveal-right">
+          <!-- Product Name + Price (from screenshot 14) -->
+          <h1 class="product-name">${currentProduct.name}</h1>
+          <div class="product-price-display">Rs. ${currentProduct.price.toLocaleString()}</div>
+          <div class="product-divider"></div>
+
+          <!-- Size Selector -->
+          <span class="option-label">size</span>
+          <div class="size-options" id="sizeOptions">
+            ${currentProduct.sizes.map(s => `
+              <button class="size-btn ${s === selectedSize ? 'selected' : ''}" 
+                data-size="${s}" onclick="selectSize('${s}')">${s}</button>
+            `).join('')}
+          </div>
+
+          <!-- Colour Selector (from screenshot 14 - black, blue, dark blue) -->
+          <span class="option-label">colour</span>
+          <div class="color-options" id="colorOptions">
+            ${currentProduct.colors.map(c => `
+              <button class="color-btn ${c === selectedColor ? 'selected' : ''}" 
+                data-color="${c}" onclick="selectColor('${c}')">
+                <span class="color-dot" style="background:${COLOR_MAP[c] || '#ccc'};"></span>
+                ${c}
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="product-divider"></div>
+
+          <!-- Quantity + Add to Cart (from screenshot 14) -->
+          <div class="quantity-row">
+            <div class="quantity-control">
+              <button class="qty-btn" onclick="changeQty(-1)">
+                <i class="fas fa-minus"></i>
+              </button>
+              <input type="number" class="qty-display" id="qtyDisplay" value="1" min="1" max="99" readonly>
+              <button class="qty-btn" onclick="changeQty(1)">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <span style="font-size:0.78rem;color:var(--text-light);">Select quantity</span>
+          </div>
+
+          <div class="add-cart-row">
+            <button class="add-cart-btn" id="addCartBtn" onclick="handleAddToCart()">
+              <i class="fas fa-shopping-bag"></i> Add to cart
+            </button>
+          </div>
+
+          <!-- Product Meta (from screenshot 14) -->
+          <div class="product-meta">
+            <span><i class="fas fa-file-contract"></i> <a href="#">Terms and Conditions</a></span>
+            <span><i class="fas fa-truck"></i> Shipping: ${currentProduct.shipping}</span>
+          </div>
+
+          <!-- Description -->
+          <div class="product-divider"></div>
+          <p style="font-size:0.85rem;color:var(--text-mid);line-height:1.9;">${currentProduct.description}</p>
+        </div>
+      `;
+      initRevealAnimations();
+    }
+
+    /* ── SIZE SELECTION ── */
+    function selectSize(size) {
+      selectedSize = size;
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.size === size);
+      });
+    }
+
+    /* ── COLOR SELECTION ── */
+    function selectColor(color) {
+      selectedColor = color;
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.color === color);
+      });
+    }
+
+    /* ── QUANTITY CHANGE ── */
+    function changeQty(delta) {
+      quantity = Math.max(1, Math.min(99, quantity + delta));
+      document.getElementById('qtyDisplay').value = quantity;
+    }
+
+    /* ── ADD TO CART HANDLER ── */
+    function handleAddToCart() {
+      if (!selectedSize || !selectedColor) {
+        showToast('⚠️ Please select size and color first.');
+        return;
+      }
+      addToCart(currentProduct, selectedSize, selectedColor, quantity);
+      // Visual feedback on button
+      const btn = document.getElementById('addCartBtn');
+      btn.classList.add('added');
+      btn.innerHTML = '<i class="fas fa-check"></i> Added to Cart!';
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to cart';
+      }, 2000);
+    }
+
+    /* ── RENDER SPECIFICATIONS ── */
+    /* From screenshot 15 - size and colour specs */
+    function renderSpecifications() {
+      if (!currentProduct) return;
+      const section = document.getElementById('specificationsSection');
+      const table = document.getElementById('specsTable');
+      section.style.display = 'block';
+      table.innerHTML = `
+        <tr>
+          <td>size</td>
+          <td>${currentProduct.sizes.join(', ')}</td>
+        </tr>
+        <tr>
+          <td>colour</td>
+          <td>${currentProduct.colors.join(', ')}</td>
+        </tr>
+        <tr>
+          <td>Category</td>
+          <td>${currentProduct.category}</td>
+        </tr>
+        <tr>
+          <td>Shipping</td>
+          <td>${currentProduct.shipping}</td>
+        </tr>
+      `;
+    }
+
+    /* ── RENDER RELATED PRODUCTS ── */
+    function renderRelatedProducts() {
+      const grid = document.getElementById('relatedGrid');
+      const related = PRODUCTS.filter(p => p.id !== currentProduct.id);
+      grid.innerHTML = related.map(p => `
+        <div class="product-card">
+          <a href="product.html?id=${p.id}">
+            <div class="card-img-wrap">
+              <img src="${p.image}" alt="${p.name}" loading="lazy">
+              ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+            </div>
+            <div class="card-info">
+              <div class="card-category">Men's Collection</div>
+              <div class="card-name">${p.name}</div>
+              <div class="card-price">Rs. ${p.price.toLocaleString()}</div>
+            </div>
+          </a>
+          <button class="card-add-btn"
+            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+            <i class="fas fa-plus"></i> Add to Cart
+          </button>
+        </div>
+      `).join('');
+    }
+
+    /* ── INIT ── */
+    loadProduct();
+  </script>
+</body>
+</html>

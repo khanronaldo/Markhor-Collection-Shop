@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - About Us Page (about.html)
+       Features: 3D Leadership Carousel, Parallax sections,
+                 Exact bios from screenshots for all 4 leaders
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us – Markhor Collections</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── ABOUT PAGE STYLES ─────────────────────────────── */
+
+   /* ── HERO BANNER ── */
+.about-hero {
+  position: relative;
+  height: 55vh;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  /* background: var(--navy) will use the new blackish color from :root */
+  background: var(--navy);
+  overflow: hidden;
+}
+
+.about-hero-bg {
+  position: absolute;
+  inset: -20%;
+  /* Using Unsplash image as placeholder, replace with local asset if needed */
+  background: url('assets/2.jpeg') center/cover no-repeat;
+  opacity: 0.25; /* Keep opacity low for the text overlay to work */
+  will-change: transform;
+}
+
+/* CHANGED: Adjusted Shade (Overlay Gradient) to match new dark blue theme */
+.about-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Shade ko kafi light kar diya hai taake image clear dikhe */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4) 30%, transparent 80%);
+}
+
+.about-hero .hero-text {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 2rem 2rem calc((100% - var(--max-width)) / 2 + 2rem);
+  max-width: 700px;
+}
+
+.about-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  color: var(--gold);
+  font-weight: 900;
+  line-height: 1.1;
+  animation: fadeInUp 0.8s 0.3s ease forwards;
+  opacity: 0;
+}
+
+.about-hero p {
+  font-family: var(--font-sub);
+  font-style: italic;
+  color: rgba(255,255,255,0.7);
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  animation: fadeInUp 0.8s 0.5s ease forwards;
+  opacity: 0;
+}
+
+    /* ══════════════════════════════════════════════════════
+       LEADERSHIP CAROUSEL — Redesigned flat-card coverflow
+       The active card is large and centered; flanking cards
+       are scaled down and offset left/right. No CSS 3D math
+       bugs — all transforms are precisely calculated in JS.
+    ══════════════════════════════════════════════════════ */
+    .carousel-section {
+      padding: 7rem 2rem 6rem;
+      background: var(--beige-bg);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .carousel-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .carousel-section .section-header {
+      margin-bottom: 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Viewport — explicit height required for absolute children */
+    .carousel-3d-wrap {
+      position: relative;
+      overflow: hidden;
+      height: 560px;
+      margin: 0 auto;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    /* Track fills wrap — cards are absolute inside it */
+    .carousel-3d {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Individual card — absolutely positioned by JS */
+    .carousel-card {
+      position: absolute;
+      width: 300px;
+      cursor: pointer;
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity  0.65s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.4s ease;
+      /* Remove pointer on side cards */
+    }
+    .carousel-card:not(.active) { cursor: pointer; }
+
+    /* Card inner: photo + name strip */
+    .carousel-card-inner {
+      background: var(--white);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: box-shadow 0.5s ease, transform 0.4s ease;
+    }
+    .carousel-card.active .carousel-card-inner {
+      box-shadow: 0 24px 72px rgba(0,0,0,0.22), 0 8px 24px rgba(201,168,76,0.3);
+    }
+    .carousel-card:hover:not(.active) .carousel-card-inner {
+      box-shadow: var(--shadow-lg);
+    }
+    .carousel-card-img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .carousel-card.active .carousel-card-img { height: 380px; }
+    .carousel-card:hover .carousel-card-img { transform: scale(1.03); }
+
+    /* Gold accent bar above the active card info */
+    .carousel-card-inner::after {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .carousel-card.active .carousel-card-inner::after { opacity: 1; }
+
+    .carousel-card-info {
+      padding: 1.25rem 1.5rem 1.5rem;
+      text-align: left;
+    }
+    .carousel-card-info .card-role {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .carousel-card-info .card-cname {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    /* Prev / Next + Dots */
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+      position: relative;
+      z-index: 10;
+    }
+    .carousel-ctrl-btn {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--navy);
+      background: var(--white);
+      color: var(--navy);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+    .carousel-ctrl-btn:hover {
+      background: var(--navy);
+      color: var(--white);
+      transform: scale(1.06);
+      box-shadow: var(--shadow-md);
+    }
+    .carousel-dots { display: flex; gap: 8px; align-items: center; }
+    .c-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(13,43,69,0.18);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+    .c-dot.active {
+      background: var(--gold);
+      width: 22px;
+      border-radius: 4px;
+    }
+
+    /* Bio detail card */
+    .leader-detail {
+      max-width: 760px;
+      margin: 3rem auto 0;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2.5rem;
+      box-shadow: var(--shadow-md);
+      border-top: 4px solid var(--gold);
+      text-align: left;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .leader-detail.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .leader-detail .ld-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .leader-detail h3 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .leader-detail .ld-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+      margin-bottom: 1.1rem;
+      border-bottom: 1px solid var(--gray-light);
+      padding-bottom: 1rem;
+    }
+    .leader-detail p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.95; }
+    .leader-detail strong { color: var(--navy); }
+
+    /* Responsive carousel */
+    @media (max-width: 900px) {
+      .carousel-3d-wrap { height: 500px; }
+      .carousel-card { width: 240px; }
+      .carousel-card.active .carousel-card-img { height: 300px; }
+      .carousel-card-img { height: 260px; }
+    }
+    @media (max-width: 600px) {
+      .carousel-3d-wrap { height: 440px; }
+      .carousel-card { width: 210px; }
+      .carousel-card.active .carousel-card-img { height: 260px; }
+      .carousel-card-img { height: 220px; }
+      .carousel-3d-wrap {
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      }
+      .leader-detail { padding: 1.5rem; }
+      .leader-detail h3 { font-size: 1.4rem; }
+    }
+    @media (max-width: 400px) {
+      .carousel-3d-wrap { height: 400px; }
+      .carousel-card { width: 185px; }
+      .carousel-section { padding: 4rem 1rem 4rem; }
+    }
+
+    /* ── PARALLAX QUOTE ── */
+.parallax-quote {
+  position: relative;
+  height: 400px; /* Thoda height badhayi taake premium lage */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000000; /* Pure Black background */
+}
+
+.parallax-quote-bg {
+  position: absolute;
+  inset: -10%;
+  /* Image update kar di hai — ek premium dark texture/office feel ke liye */
+  background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80') center/cover no-repeat;
+  opacity: 0.3; /* Image thodi zyada nazar aayegi ab */
+  will-change: transform;
+  filter: grayscale(100%); /* Isko black & white kiya taake gold glow aur uthay */
+}
+
+.parallax-quote::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Blue hata kar "Halka Black Shade" kar diya */
+  background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+}
+
+.quote-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2.5rem;
+}
+
+.quote-content blockquote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-style: italic;
+  color: var(--white);
+  max-width: 900px;
+  line-height: 1.4;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5); /* Text ko depth di */
+}
+
+/* ── ASAD KHAN (CEO) PROFESSIONAL SHIMMER EFFECT ── */
+.quote-content cite {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  font-style: normal; /* Cite default italic hota hai, isko seedha kiya for professional look */
+  
+  /* Metallic Gold Gradient */
+  background: linear-gradient(
+    to right, 
+    #BF953F 20%, 
+    #FCF6BA 40%, 
+    #B38728 60%, 
+    #FBF5B7 80%, 
+    #AA771C 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Soft Premium Glow */
+  filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.3));
+  
+  /* Animation lagayi hai jo shimmer karegi */
+  animation: shineGold 4s linear infinite;
+}
+
+/* Behoda scaling khatam, ab sirf luxury chamak aayegi */
+@keyframes shineGold {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Quote Text ko bhi thoda behtar karte hain */
+.quote-content blockquote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-style: italic;
+  color: #f0f0f0; /* Thoda sa off-white taake chubhe nahi */
+  max-width: 850px;
+  line-height: 1.5;
+  margin: 0 auto;
+  opacity: 0.95;
+}
+
+/* Glow Animation */
+@keyframes goldGlow {
+  from {
+    text-shadow: 0 0 8px rgba(201, 168, 76, 0.6), 0 0 15px rgba(201, 168, 76, 0.3);
+    transform: scale(1);
+  }
+  to {
+    text-shadow: 0 0 15px rgba(201, 168, 76, 0.9), 0 0 30px rgba(201, 168, 76, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+/* Responsiveness update */
+@media (max-width: 768px) {
+  .parallax-quote { height: 320px; }
+  .quote-content blockquote { font-size: 1.4rem; }
+}
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+   <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link active">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products...">
+        <div class="search-results-dropdown"></div>
+      </div>
+      <a href="checkout.html" class="header-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+      <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── ABOUT HERO ─────────────────────────────────────────────── -->
+
+  <section class="about-hero">
+    <div class="about-hero-bg" data-parallax="0.3"></div>
+    <div class="hero-text">
+      <h1>Markhor Collections</h1>
+      <p>Suite for the Modern Journey — where style meets substance.</p>
+    </div>
+  </section>
+
+
+  <!-- ── LEADERSHIP 3D CAROUSEL ────────────────────────────────── -->
+  <!-- Leaders from screenshots 9, 10, 11, 12 -->
+  <section class="carousel-section">
+    <div class="section-header">
+      <span class="section-label">Our Leadership</span>
+      <h2 class="section-title">The Team Behind the Brand</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">Visionaries who built Markhor Collections from passion</p>
+    </div>
+
+    <!-- 3D ROTATING CAROUSEL -->
+    <div class="carousel-3d-wrap" id="carousel3d">
+      <div class="carousel-3d" id="carouselTrack">
+        <!-- Cards injected by JS below -->
+      </div>
+    </div>
+
+    <!-- Carousel Navigation -->
+    <div class="carousel-controls">
+      <button class="carousel-ctrl-btn" id="carouselPrev">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="carousel-dots" id="carouselDots"></div>
+      <button class="carousel-ctrl-btn" id="carouselNext">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Leader Bio Detail Card (updates when carousel changes) -->
+    <div id="leaderDetail" class="leader-detail active"></div>
+  </section>
+
+  <!-- ── PARALLAX QUOTE SECTION ────────────────────────────────── -->
+  <!-- Parallax scrolling effect between sections -->
+  <div class="parallax-quote">
+    <div class="parallax-quote-bg" data-parallax="0.25"></div>
+    <div class="quote-content">
+      <blockquote>
+        "Every collection reflects the belief that clothing should empower confidence and self-expression."
+      </blockquote>
+      <cite>— Asad Khan, CEO, Markhor Collections</cite>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+         <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+        <p>Suite for the Modern Journey. Premium clothing that blends style, quality, and responsibility.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="#">Shipping</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="checkout.html">Your Cart</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+      <span>Designed with ♥</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ============================================================
+       ABOUT PAGE — LEADERSHIP CAROUSEL
+       Coverflow approach: each card's transform is set
+       individually in JS on every state change.
+       Active card  → centre, scale(1),    translateX(0),       opacity 1
+       Side cards   → offset ± GAP px,     scale(0.82),         opacity 0.55
+       Far cards    → offset ± GAP*2.2 px, scale(0.68),         opacity 0.28
+       All cards use translateX only — no perspective/rotateY
+       bugs. Wrapping is handled by modular arithmetic.
+    ============================================================ */
+
+    const LEADERS = [
+      {
+        name: 'SHOUKAT KHAN',
+        role: 'Chairman',
+        image: 'assets/shoukatkhan.jpeg',
+        bio: `Our Chairman is the main leader of our clothing brand. He helps guide the company and makes important decisions about our future. With a strong passion and good leadership skills, because of his hard work and clear vision, our brand continues to grow and improve.`
+      },
+      {
+        name: 'ASAD KHAN',
+        role: 'CEO',
+        image: 'assets/Asadkhan.jpeg',
+        bio: `<strong>Markhor Collections</strong> was created with a vision to redefine modern fashion. With a passion for design and a deep understanding of style, <strong>Asad khan</strong> set out to build a brand that blends quality, creativity, and authenticity. Every collection reflects the belief that clothing should empower confidence and self-expression.`
+      },
+      {
+        name: 'REFAQAT KHAN',
+        role: 'MD',
+        image: 'assets/md1.jpeg',
+        bio: `As the Managing Director of <strong>Markhor Collections</strong>, Refaqat Khan leads the brand with a clear vision for innovation, quality, and growth. With strong leadership and a deep understanding of the fashion industry, he oversees strategic planning, brand development, and operational excellence. Under his direction, the company continues to expand while staying true to its core values of style, integrity, and customer satisfaction.`
+      },
+      {
+        name: 'SADAT KHAN',
+        role: 'MD',
+        image: 'assets/md2.jpeg',
+        bio: `As the Second Managing Director of <strong>Markhor Collections</strong>, Sadat Khan plays a key role in driving operational excellence and strategic growth. Working closely with the Managing Director, he oversees day-to-day management, team coordination, and market expansion initiatives, ensuring the brand continues to deliver quality, innovation, and customer satisfaction.`
+      }
+    ];
+
+    const N = LEADERS.length;
+    let current = 0;
+    let autoTimer = null;
+    let isPaused = false;
+
+    /* ── CARD WIDTH (read from CSS, fallback 300) ── */
+    function getCardWidth() {
+      const card = document.querySelector('.carousel-card');
+      return card ? card.offsetWidth : 300;
+    }
+
+    /* ── MODULAR DISTANCE (-N/2 … N/2) so shortest path wraps ── */
+    function modDist(from, to, n) {
+      let d = ((to - from) % n + n) % n;
+      if (d > n / 2) d -= n;
+      return d;
+    }
+
+    /* ── POSITION ALL CARDS ── */
+    function positionCards() {
+      const cards = document.querySelectorAll('.carousel-card');
+      const wrap  = document.getElementById('carousel3d');
+      const cx    = wrap.offsetWidth / 2;   /* horizontal centre of wrap */
+      const cy    = wrap.offsetHeight / 2;  /* vertical centre */
+      const GAP   = getCardWidth() * 1.08;  /* horizontal step between slots */
+
+      cards.forEach((card, i) => {
+        const dist  = modDist(current, i, N);   /* signed slot distance from active */
+        const absDist = Math.abs(dist);
+
+        /* Only show active + immediate neighbours; hide the rest */
+        const visible = absDist <= Math.floor(N / 2);
+
+        const scale   = visible ? (absDist === 0 ? 1 : absDist === 1 ? 0.82 : 0.68) : 0;
+        const opacity = visible ? (absDist === 0 ? 1 : absDist === 1 ? 0.58 : 0.32) : 0;
+        const xOffset = dist * GAP;
+        /* Slight vertical lift for active card */
+        const yOffset = absDist === 0 ? -12 : 0;
+        const z       = absDist === 0 ? 1 : absDist === 1 ? 0 : -1;
+
+        card.style.left      = cx + 'px';
+        card.style.top       = cy + 'px';
+        /* translateX(-50%,-50%) centres card on its anchor point */
+        card.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px)) scale(${scale})`;
+        card.style.opacity   = opacity;
+        card.style.zIndex    = 10 - absDist;
+        card.style.pointerEvents = absDist === 0 ? 'auto' : (absDist === 1 ? 'auto' : 'none');
+        card.classList.toggle('active', absDist === 0);
+      });
+    }
+
+    /* ── UPDATE DOT STATE ── */
+    function updateDots() {
+      document.querySelectorAll('.c-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+    }
+
+    /* ── UPDATE BIO PANEL with fade ── */
+    function updateBio(index) {
+      const leader = LEADERS[index];
+      const detail = document.getElementById('leaderDetail');
+      /* Fade out → swap content → fade in */
+      detail.classList.remove('active');
+      setTimeout(() => {
+        detail.innerHTML = `
+          <span class="ld-name">${leader.role}</span>
+          <h3>${leader.name}</h3>
+          <div class="ld-title">${leader.role} — Markhor Collections</div>
+          <p>${leader.bio}</p>
+        `;
+        detail.classList.add('active');
+      }, 200);
+    }
+
+    /* ── NAVIGATE ── */
+    function goTo(index) {
+      current = ((index % N) + N) % N;
+      positionCards();
+      updateDots();
+      updateBio(current);
+    }
+
+    /* ── AUTO-ROTATE ── */
+    function startAuto() {
+      stopAuto();
+      autoTimer = setInterval(() => {
+        if (!isPaused) goTo(current + 1);
+      }, 4000);
+    }
+    function stopAuto() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    /* ── BUILD ── */
+    function buildCarousel() {
+      const track  = document.getElementById('carouselTrack');
+      const dots   = document.getElementById('carouselDots');
+      track.innerHTML = '';
+      dots.innerHTML  = '';
+
+      LEADERS.forEach((leader, i) => {
+        /* Card */
+        const card = document.createElement('div');
+        card.className = 'carousel-card';
+        card.dataset.index = i;
+        card.innerHTML = `
+          <div class="carousel-card-inner">
+            <img class="carousel-card-img" src="${leader.image}" alt="${leader.name}" loading="lazy">
+            <div class="carousel-card-info">
+              <span class="card-role">${leader.role}</span>
+              <div class="card-cname">${leader.name}</div>
+            </div>
+          </div>`;
+        card.addEventListener('click', () => { goTo(i); });
+        track.appendChild(card);
+
+        /* Dot */
+        const dot = document.createElement('button');
+        dot.className = 'c-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Go to ${leader.name}`);
+        dot.addEventListener('click', () => goTo(i));
+        dots.appendChild(dot);
+      });
+
+      /* Initial render */
+      positionCards();
+      updateBio(0);
+
+      /* Pause on hover */
+      const wrap = document.getElementById('carousel3d');
+      wrap.addEventListener('mouseenter', () => { isPaused = true;  });
+      wrap.addEventListener('mouseleave', () => { isPaused = false; });
+
+      /* Touch/swipe support */
+      let touchStartX = 0;
+      wrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      wrap.addEventListener('touchend',   e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+      });
+    }
+
+    /* ── RE-POSITION ON RESIZE ── */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(positionCards, 120);
+    });
+
+    /* ── CONTROLS ── */
+    document.getElementById('carouselNext')?.addEventListener('click', () => goTo(current + 1));
+    document.getElementById('carouselPrev')?.addEventListener('click', () => goTo(current - 1));
+
+    /* ── INIT ── */
+    buildCarousel();
+    startAuto();
+  </script>
+</body>
+</html>

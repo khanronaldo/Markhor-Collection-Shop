@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - Contact Page (contact.html)
+       Features: Contact form → mailto + WhatsApp wa.me link
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us – Markhor Collections</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── CONTACT PAGE STYLES ────────────────────────── */
+
+    .contact-hero {
+      background: var(--navy);
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=60') center/cover no-repeat;
+      opacity: 0.1;
+    }
+    .contact-hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--white);
+      position: relative;
+      z-index: 1;
+    }
+    .contact-hero p {
+      font-family: var(--font-sub);
+      font-style: italic;
+      color: rgba(255,255,255,0.65);
+      position: relative;
+      z-index: 1;
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    /* ── MAIN CONTACT LAYOUT ── */
+    .contact-layout {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* ── CONTACT FORM ── */
+    .contact-form-col h2 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .contact-form-col > p {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      margin-bottom: 2.5rem;
+    }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group.full { grid-column: span 2; }
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+    }
+    .form-group label .required { color: var(--gold); margin-left: 2px; }
+    .form-input, .form-textarea {
+      padding: 12px 16px;
+      border: 1.5px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-dark);
+      background: var(--white);
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-light); }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(13,43,69,0.08);
+    }
+    .form-textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+    .form-note {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Send Buttons */
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .btn-send-email {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-send-email:hover {
+      background: var(--gold);
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-gold);
+    }
+    .btn-send-whatsapp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: #25D366;
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .btn-send-whatsapp:hover {
+      background: #128C7E;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37,211,102,0.4);
+    }
+
+    /* ── CONTACT INFO COLUMN ── */
+    .contact-info-col {}
+    .contact-info-col .info-image {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2.5rem;
+    }
+    .info-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .info-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .info-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-gold);
+    }
+    .info-item .info-text h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 3px;
+    }
+    .info-item .info-text p {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+    }
+    .info-item .info-text a {
+      color: var(--navy);
+      font-weight: 600;
+    }
+    .info-item .info-text a:hover { color: var(--gold); }
+
+    @media (max-width: 900px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+    }
+    @media (max-width: 540px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+       <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link active">Contact</a>
+      </nav>
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products...">
+        <div class="search-results-dropdown"></div>
+      </div>
+      <a href="checkout.html" class="header-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+      <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── CONTACT HERO ───────────────────────────────────────────── -->
+  <div class="contact-hero">
+    <h1>Contact us</h1>
+    <!-- Exact text from screenshot 13 -->
+    <p>Contact us about anything related to our company or services.</p>
+  </div>
+
+  <!-- ── CONTACT LAYOUT ─────────────────────────────────────────── -->
+  <div class="contact-layout">
+
+    <!-- ── LEFT: CONTACT FORM ── -->
+    <div class="contact-form-col reveal-left">
+      <span class="section-label">Get in Touch</span>
+      <h2>Send us a Message</h2>
+      <!-- Exact subtitle from screenshot 13 -->
+      <p>Contact us about anything related to our company or services.</p>
+
+      <!-- Contact Form - fields from screenshot 13 -->
+      <form id="contactForm" novalidate>
+        <div class="form-grid">
+          <!-- Name field - from screenshot 13 -->
+          <div class="form-group">
+            <label>Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="contactName" placeholder="John Doe" required>
+          </div>
+
+          <!-- Phone - from screenshot 13 -->
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" class="form-input" id="contactPhone" placeholder="+1 555-555-5556">
+          </div>
+
+          <!-- Email - from screenshot 13 -->
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" class="form-input" id="contactEmail" placeholder="example@mail.com" required>
+          </div>
+
+          <!-- Company/Subject - adapted from screenshot 13 -->
+          <div class="form-group">
+            <label>Subject <span class="required">*</span></label>
+            <input type="text" class="form-input" id="contactSubject" placeholder="Describe your request" required>
+          </div>
+
+          <!-- Message - full width -->
+          <div class="form-group full">
+            <label>Message <span class="required">*</span></label>
+            <textarea class="form-textarea" id="contactMessage" placeholder="Write down your message" required></textarea>
+          </div>
+        </div>
+
+        <!-- From screenshot 13 -->
+        <p class="form-note">We typically respond within 1-2 business days.</p>
+
+        <div class="form-actions">
+          <!-- Primary: Open Gmail mailto -->
+          <button type="button" class="btn-send-email" onclick="sendViaEmail()">
+            <i class="fas fa-envelope"></i> Send Message via Email
+          </button>
+
+          <!-- WhatsApp: Open wa.me with pre-filled message -->
+          <button type="button" class="btn-send-whatsapp" onclick="sendViaWhatsApp()">
+            <i class="fab fa-whatsapp"></i> Send via WhatsApp
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ── RIGHT: CONTACT INFO ── -->
+    <div class="contact-info-col reveal-right">
+      <!-- Store image (similar to screenshot 13's right side photo) -->
+      <img 
+        src="assets/2.jpeg" 
+        alt="Markhor Collections Store" 
+        class="info-image"
+        loading="lazy"
+      >
+
+      <div class="info-items">
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="info-text">
+            <h4>Location</h4>
+            <p>Islamabad, Pakistan</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="info-text">
+            <h4>WhatsApp</h4>
+            <p><a href="https://wa.me/923001234567" target="_blank">+92 300 123 4567</a></p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-envelope"></i></div>
+          <div class="info-text">
+            <h4>Email</h4>
+            <p><a href="mailto:info@markhorcollections.com">info@markhorcollections.com</a></p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-clock"></i></div>
+          <div class="info-text">
+            <h4>Business Hours</h4>
+            <p>Mon–Sat: 10 AM – 8 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+         <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+        <p>Suite for the Modern Journey.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="#">Shipping</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+      <span>Designed with ♥</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ============================================================
+       CONTACT PAGE JAVASCRIPT
+       - Form validation
+       - mailto: link generator (opens email client)
+       - wa.me link generator (opens WhatsApp)
+       Admin contact details:
+         Email: info@markhorcollections.com
+         WhatsApp: +923001234567 (REPLACE with real number)
+       ============================================================ */
+
+    /* ── ADMIN CONTACT CONFIG ── */
+    /* IMPORTANT: Replace these with the real admin contact details */
+    const ADMIN_EMAIL = 'info@markhorcollections.com';
+    const ADMIN_WHATSAPP = '923001234567'; /* Format: country code + number, no + or spaces */
+
+    /* ── GET FORM VALUES ── */
+    function getFormValues() {
+      return {
+        name: document.getElementById('contactName').value.trim(),
+        phone: document.getElementById('contactPhone').value.trim(),
+        email: document.getElementById('contactEmail').value.trim(),
+        subject: document.getElementById('contactSubject').value.trim(),
+        message: document.getElementById('contactMessage').value.trim()
+      };
+    }
+
+    /* ── VALIDATE FORM ── */
+    function validateForm(data) {
+      if (!data.name) { showToast('⚠️ Please enter your name.'); return false; }
+      if (!data.email || !data.email.includes('@')) { showToast('⚠️ Please enter a valid email.'); return false; }
+      if (!data.subject) { showToast('⚠️ Please enter a subject.'); return false; }
+      if (!data.message) { showToast('⚠️ Please enter your message.'); return false; }
+      return true;
+    }
+
+    /* ── SEND VIA EMAIL (mailto:) ──
+       Generates a pre-filled mailto link and opens the user's
+       default email client with all form data pre-populated.
+    ── */
+    function sendViaEmail() {
+      const data = getFormValues();
+      if (!validateForm(data)) return;
+
+      /* Build mailto link with pre-filled subject and body */
+      const subject = encodeURIComponent(`[Markhor Collections] ${data.subject}`);
+      const body = encodeURIComponent(
+        `Name: ${data.name}\n` +
+        `Phone: ${data.phone || 'Not provided'}\n` +
+        `Email: ${data.email}\n\n` +
+        `Message:\n${data.message}`
+      );
+
+      /* Open mailto link - this triggers the user's email client */
+      const mailtoLink = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
+      window.open(mailtoLink, '_blank');
+
+      showToast('✓ Email client opened! Please send the email.');
+    }
+
+    /* ── SEND VIA WHATSAPP (wa.me) ──
+       Generates a WhatsApp API link with all form data pre-formatted
+       as a message to the admin's WhatsApp number.
+    ── */
+    function sendViaWhatsApp() {
+      const data = getFormValues();
+      if (!validateForm(data)) return;
+
+      /* Build WhatsApp message string */
+      const waMessage =
+        `*New Contact Message — Markhor Collections*\n\n` +
+        `*Name:* ${data.name}\n` +
+        `*Phone:* ${data.phone || 'Not provided'}\n` +
+        `*Email:* ${data.email}\n` +
+        `*Subject:* ${data.subject}\n\n` +
+        `*Message:*\n${data.message}`;
+
+      /* Build wa.me link */
+      const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(waMessage)}`;
+
+      /* Open WhatsApp in a new tab */
+      window.open(waLink, '_blank');
+
+      showToast('✓ WhatsApp opened with your message!');
+    }
+  </script>
+</body>
+</html>

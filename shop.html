@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ============================================================
+       MARKHOR COLLECTIONS - Shop Page (shop.html)
+       Features: Category tabs, Sidebar filters (size/color/price),
+                 Dynamic JS filtering, Coming Soon for Women/Kids
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop – Markhor Collections</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── SHOP PAGE STYLES ──────────────────────────────── */
+
+    /* Page Header Banner */
+    .shop-hero {
+      background: var(--navy);
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .shop-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('assets/mainimage.jpeg') center/cover no-repeat;
+      opacity: 0.15;
+    }
+    .shop-hero .content { position: relative; z-index: 1; }
+    .shop-hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .shop-hero p {
+      font-family: var(--font-sub);
+      font-style: italic;
+      color: rgba(255,255,255,0.65);
+      font-size: 1.1rem;
+    }
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .breadcrumb a { color: var(--gold); }
+    .breadcrumb span { color: rgba(255,255,255,0.35); }
+
+    /* ── SHOP LAYOUT ── */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR FILTER ── */
+    .sidebar {
+      position: sticky;
+      top: 90px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      border: 1px solid var(--gray-light);
+    }
+    .sidebar-header {
+      padding: 1.25rem 1.5rem;
+      background: var(--navy);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidebar-header h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .sidebar-header button {
+      font-size: 0.72rem;
+      color: var(--gold);
+      font-weight: 600;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .filter-section {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .filter-section:last-child { border-bottom: none; }
+    .filter-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      padding: 0;
+    }
+    .filter-title i { font-size: 0.7rem; color: var(--text-light); transition: var(--transition); }
+    .filter-section.collapsed .filter-title i { transform: rotate(-90deg); }
+    .filter-options { display: flex; flex-direction: column; gap: 8px; }
+    .filter-section.collapsed .filter-options { display: none; }
+
+    /* Checkbox Option */
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .filter-option input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+    .filter-option label {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      cursor: pointer;
+      text-transform: capitalize;
+    }
+
+    /* Price Range Slider */
+    .price-range-wrap { padding-top: 0.5rem; }
+    .price-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .price-slider {
+      width: 100%;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+    .price-display {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-top: 8px;
+    }
+
+    /* ── MAIN SHOP AREA ── */
+    .shop-main {}
+
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: var(--white);
+      padding: 0.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gray-light);
+      width: fit-content;
+    }
+    .cat-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      background: none;
+    }
+    .cat-tab img { width: 24px; height: 24px; object-fit: cover; border-radius: 4px; }
+    .cat-tab:hover { color: var(--navy); background: var(--beige-bg); }
+    .cat-tab.active { background: var(--navy); color: var(--white); }
+
+    /* Products Header Bar */
+    .products-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .products-count {
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+    .products-count strong { color: var(--navy); }
+    .sort-select {
+      padding: 8px 14px;
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      background: var(--white);
+      cursor: pointer;
+      outline: none;
+    }
+    .sort-select:focus { border-color: var(--gold); }
+
+    /* No Results Message */
+    .no-results-msg {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-light);
+    }
+    .no-results-msg i { font-size: 3rem; color: var(--beige); margin-bottom: 1rem; display: block; }
+    .no-results-msg p { font-size: 0.9rem; }
+
+    /* Coming Soon Section (Women & Kids) */
+    .coming-soon-section {
+      display: none; /* Hidden by default, shown via JS */
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .coming-soon-section.active { display: block; }
+    .coming-soon-big {
+      background: var(--beige-bg);
+      border-radius: var(--radius-lg);
+      padding: 5rem 3rem;
+      border: 2px dashed var(--gold);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .coming-soon-big .cs-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+    .coming-soon-big h2 {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .coming-soon-big p { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 2rem; }
+    .cs-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(13,43,69,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .cs-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 6px;
+      width: 35%;
+      animation: fillAnim 3s ease-in-out infinite alternate;
+    }
+    @keyframes fillAnim {
+      from { width: 20%; }
+      to { width: 60%; }
+    }
+
+    @media (max-width: 900px) {
+      .shop-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .category-tabs { flex-wrap: wrap; }
+    }
+    @media (max-width: 640px) {
+      .products-bar { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+       <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link active">Shop</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <div class="header-search">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search products...">
+        <div class="search-results-dropdown"></div>
+      </div>
+      <a href="checkout.html" class="header-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="contact.html" class="btn-contact">
+        <i class="fas fa-envelope"></i> Contact Us
+      </a>
+      <div class="menu-toggle" onclick="openDrawer()" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: #D4AF37; cursor: pointer; z-index: 1000;">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeDrawer()"></div>
+
+<nav class="mobile-nav" id="mobile-drawer">
+  
+  <div class="drawer-header">
+    <span style="color: #D4AF37; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase;">Menu</span>
+    <div class="close-btn" onclick="closeDrawer()">&times;</div>
+  </div>
+  
+  <div class="drawer-links">
+    <a href="index.html" onclick="closeDrawer()">Home</a>
+    <a href="shop.html" onclick="closeDrawer()">Shop</a>
+    <a href="about.html" onclick="closeDrawer()">About Us</a>
+    <a href="contact.html" onclick="closeDrawer()">Contact</a>
+  </div>
+
+  <div class="drawer-footer">
+    <img src="assets/logo.png" alt="Markhor Logo" class="drawer-footer-img">
+    <div class="drawer-logo-text">
+      <span class="drawer-brand">Markhor</span>
+      <span class="drawer-tagline">Collections</span>
+    </div>
+  </div>
+
+</nav>
+
+<style>
+  /* Desktop pe menu icon chupane ke liye */
+  @media (min-width: 769px) {
+    .menu-toggle { display: none !important; }
+  }
+
+  /* Black Blur Overlay Styling */
+  .mobile-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+
+  /* Drawer Container Styling */
+  .mobile-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -100%; /* Default hidden */
+    width: 300px !important;
+    height: 100vh !important;
+    background-color: #0A1128 !important; /* Premium Navy Blue */
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .close-btn {
+    font-size: 2.8rem !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    line-height: 0.5 !important;
+    transition: color 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .close-btn:hover {
+    color: #D4AF37 !important;
+    transform: rotate(90deg) !important; /* Cool rotation on hover */
+  }
+
+  /* Links Styling (Sleek and Modern) */
+  .drawer-links {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  .drawer-links a {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    padding: 18px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+  }
+
+  /* Hover Effect: Text shifts right and turns gold */
+  .drawer-links a:hover {
+    color: #D4AF37 !important;
+    padding-left: 10px !important; 
+  }
+
+  /* Bottom Footer (Logo Space) */
+  .drawer-footer {
+    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    padding: 2rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .drawer-footer-img {
+    width: 50px !important;
+    height: auto !important;
+    margin-right: 15px !important;
+    object-fit: contain !important;
+  }
+
+  .drawer-logo-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .drawer-brand {
+    color: #FFFFFF !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .drawer-tagline {
+    color: #D4AF37 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+  }
+</style>
+
+<script>
+  function closeDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    
+    if (drawer) drawer.style.right = '-100%'; // Hide drawer
+    
+    if (overlay) {
+      overlay.style.opacity = '0'; // Fade out overlay
+      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+    }
+  }
+
+  function openDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('mobile-overlay');
+      
+      if(drawer) drawer.style.right = '0'; // Slide in drawer
+      
+      if(overlay) {
+        overlay.style.opacity = '1'; // Fade in overlay
+        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+      }
+  }
+</script>
+  </header>
+
+  <!-- ── SHOP HERO BANNER ───────────────────────────────────────── -->
+  <div class="shop-hero">
+    <div class="content">
+      <h1>All Products</h1>
+      <p>Curated clothing for the modern journey</p>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <span>Shop</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SHOP LAYOUT: SIDEBAR + MAIN ───────────────────────────── -->
+  <div class="shop-layout">
+
+  <div class="shop-controls">
+
+  <button id="filterToggleBtn" class="btn-filter-toggle">
+
+    <i class="fas fa-sliders-h"></i> <span>Filter Collection</span>
+
+  </button>
+
+</div>
+
+
+
+<aside class="sidebar-drawer" id="shopSidebar">
+
+  <div class="drag-handle"></div>
+
+
+
+  <button id="closeSidebar" class="close-sidebar">&times;</button>
+
+  
+
+  <div class="sidebar-header">
+
+    <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+
+    <button id="clearFilters">Clear All</button>
+
+  </div>
+
+
+
+  <div class="filter-content">
+
+    <div class="filter-section" id="sizeSection">
+
+      <button class="filter-title">Size <i class="fas fa-chevron-down"></i></button>
+
+      <div class="filter-options" id="sizeFilters">
+
+        <label class="filter-option"><input type="checkbox" name="size" value="S"> <span>S</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="size" value="M"> <span>M</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="size" value="L"> <span>L</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="size" value="XL"> <span>XL</span></label>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="filter-section" id="colorSection">
+
+      <button class="filter-title">Colour <i class="fas fa-chevron-down"></i></button>
+
+      <div class="filter-options" id="colorFilters">
+
+        <label class="filter-option"><input type="checkbox" name="color" value="black"> <span>Black</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="color" value="blue"> <span>Blue</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="color" value="dark blue"> <span>Dark Blue</span></label>
+
+        <label class="filter-option"><input type="checkbox" name="color" value="white"> <span>White</span></label>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="filter-section">
+
+      <button class="filter-title">Price Range <i class="fas fa-chevron-down"></i></button>
+
+      <div class="price-range-wrap">
+
+        <div class="price-labels">
+
+          <span>0 Rs.</span>
+
+          <span>3,500 Rs.</span>
+
+        </div>
+
+        <input type="range" class="price-slider" id="priceSlider" min="0" max="3500" value="3500" step="100">
+
+        <div class="price-display" id="priceDisplay">Up to Rs. 3,500</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>
+
+
+
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+
+<style>
+
+/* ── BUTTON STYLING ── */
+
+.shop-controls {
+
+  max-width: var(--max-width, 1200px);
+
+  margin: 2rem auto;
+
+  padding: 0 2rem;
+
+  display: flex;
+
+  justify-content: flex-start; 
+
+}
+
+
+
+.btn-filter-toggle {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background: #000;
+
+  color: var(--gold, #C9A84C);
+
+  padding: 10px 25px;
+
+  border: 1px solid var(--gold, #C9A84C);
+
+  border-radius: 4px;
+
+  font-family: var(--font-heading, sans-serif);
+
+  font-weight: 700;
+
+  font-size: 0.95rem;
+
+  cursor: pointer;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  transition: all 0.3s ease;
+
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.1);
+
+}
+
+
+
+.btn-filter-toggle:hover {
+
+  background: var(--gold, #C9A84C);
+
+  color: #000;
+
+}
+
+
+
+/* ── LAPTOP / DESKTOP (Side Drawer) ── */
+
+.sidebar-drawer {
+
+  position: fixed;
+
+  top: 0;
+
+  left: -400px; /* Left se bahar chupa hai */
+
+  width: 350px;
+
+  height: 100vh;
+
+  background: #fff;
+
+  z-index: 9999;
+
+  /* Sirf Left ko animate karega */
+
+  transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+
+  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+
+  padding: 40px 30px;
+
+  overflow-y: auto;
+
+}
+
+
+
+.sidebar-drawer.active {
+
+  left: 0; /* Smoothly screen par aayega */
+
+}
+
+
+
+.drag-handle { display: none; } /* Hide on Desktop */
+
+
+
+/* ── OVERLAY ── */
+
+.sidebar-overlay {
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.6);
+
+  backdrop-filter: blur(3px);
+
+  z-index: 9998;
+
+  display: none;
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+}
+
+.sidebar-overlay.active { display: block; opacity: 1; }
+
+
+
+/* ── INNER FILTERS STYLING ── */
+
+.close-sidebar { position: absolute; top: 15px; right: 20px; font-size: 2rem; background: none; border: none; cursor: pointer; color: #000; }
+
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+
+.sidebar-header h3 { font-family: var(--font-heading, sans-serif); font-weight: 800; font-size: 1.2rem; margin: 0; }
+
+#clearFilters { background: none; border: none; color: #888; text-decoration: underline; cursor: pointer; font-size: 0.85rem; }
+
+.filter-section { margin-bottom: 25px; }
+
+.filter-title { width: 100%; display: flex; justify-content: space-between; background: none; border: none; font-weight: 700; padding: 10px 0; cursor: pointer; border-bottom: 1px solid #f5f5f5; font-size: 1rem; }
+
+.filter-options { padding: 15px 0; display: flex; flex-direction: column; gap: 12px; }
+
+.filter-option { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; }
+
+.filter-option input[type="checkbox"] { accent-color: var(--gold, #C9A84C); width: 18px; height: 18px; }
+
+.price-slider { width: 100%; accent-color: var(--gold, #C9A84C); margin: 15px 0; }
+
+.price-labels { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #555; }
+
+.price-display { background: #f9f9f9; padding: 10px; text-align: center; border-radius: 4px; font-weight: 700; color: var(--gold, #C9A84C); border: 1px solid #eee; }
+
+
+
+/* ── MOBILE OPTIMIZATION (THE FLAWLESS BOTTOM SHEET) ── */
+
+@media (max-width: 768px) {
+
+  .shop-controls {
+
+    margin: 15px auto; 
+
+    padding: 0 15px;
+
+    position: sticky; 
+
+    top: 75px; 
+
+    z-index: 100;
+
+  }
+
+  
+
+  .btn-filter-toggle {
+
+    width: 100%;
+
+    justify-content: center;
+
+    padding: 14px;
+
+  }
+
+
+
+  /* Exactly Like Premium E-Commerce Apps */
+
+  .sidebar-drawer {
+
+    left: 0; /* Align perfectly to edges */
+
+    top: auto; /* Disconnect from top */
+
+    bottom: -100vh; /* Exactly 1 screen height niche chupa do */
+
+    width: 100%; 
+
+    height: 85vh; /* 15% jagah uper khali notch k liye */
+
+    border-radius: 20px 20px 0 0; 
+
+    padding: 30px 20px;
+
+    /* Transition sirf bottom par hogi, no transform glitches */
+
+    transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+
+  }
+
+
+
+  .sidebar-drawer.active {
+
+    bottom: 0; /* Natural flow mein screen ke bottom se lag jaye ga */
+
+    left: 0; 
+
+  }
+
+
+
+  .drag-handle {
+
+    display: block;
+
+    margin: -15px auto 20px;
+
+    width: 40px;
+
+    height: 5px;
+
+    background: #e0e0e0;
+
+    border-radius: 5px;
+
+  }
+
+
+
+  .close-sidebar {
+
+    top: 20px;
+
+    right: 20px;
+
+    background: #f4f4f4;
+
+    width: 35px;
+
+    height: 35px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 1.2rem;
+
+  }
+
+}
+
+</style>
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const filterBtn = document.getElementById('filterToggleBtn');
+
+    const closeBtn = document.getElementById('closeSidebar');
+
+    const sidebar = document.getElementById('shopSidebar');
+
+    const overlay = document.getElementById('sidebarOverlay');
+
+    const priceSlider = document.getElementById('priceSlider');
+
+    const priceDisplay = document.getElementById('priceDisplay');
+
+
+
+    // Drawer Open
+
+    filterBtn.addEventListener('click', () => {
+
+        sidebar.classList.add('active');
+
+        overlay.classList.add('active');
+
+        document.body.style.overflow = 'hidden'; 
+
+    });
+
+
+
+    // Drawer Close
+
+    const closeDrawer = () => {
+
+        sidebar.classList.remove('active');
+
+        overlay.classList.remove('active');
+
+        document.body.style.overflow = ''; 
+
+    };
+
+
+
+    closeBtn.addEventListener('click', closeDrawer);
+
+    overlay.addEventListener('click', closeDrawer);
+
+
+
+    // Price Update
+
+    priceSlider.addEventListener('input', (e) => {
+
+        priceDisplay.textContent = `Up to Rs. ${parseInt(e.target.value).toLocaleString()}`;
+
+    });
+
+});
+
+</script>
+
+    <!-- ── MAIN PRODUCTS AREA ── -->
+    <main class="shop-main">
+
+      <!-- Category Tabs - from screenshot 7 -->
+      <div class="category-tabs">
+        <button class="cat-tab active" data-cat="all">
+          All Products
+        </button>
+        <button class="cat-tab" data-cat="men">
+          <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=100&q=60" alt="Men"> Men
+        </button>
+        <button class="cat-tab" data-cat="women">
+          <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=100&q=60" alt="Women"> Women
+        </button>
+        <button class="cat-tab" data-cat="kids">
+          <img src="https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=100&q=60" alt="Kids"> Kids
+        </button>
+      </div>
+
+      <!-- Products Count + Sort Bar -->
+      <div class="products-bar" id="productsBar">
+        <div class="products-count">Showing <strong id="productCount">3</strong> products</div>
+        <select class="sort-select" id="sortSelect">
+          <option value="featured">Sort By: Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name">Name: A-Z</option>
+        </select>
+      </div>
+
+      <!-- Products Grid - rendered by JS -->
+      <div class="products-grid" id="productsGrid"></div>
+
+      <!-- No Results Message -->
+      <div class="no-results-msg" id="noResults" style="display:none;">
+        <i class="fas fa-search"></i>
+        <p>No products match your filters. Try adjusting your selection.</p>
+      </div>
+
+      <!-- Coming Soon Section for Women/Kids categories -->
+      <!-- Only shown when women or kids tab is active -->
+      <div class="coming-soon-section" id="comingSoonSection">
+        <div class="coming-soon-big">
+          <div class="cs-icon">🌸</div>
+          <h2>Coming Soon</h2>
+          <p>We're working hard on this collection. Subscribe to be notified when it launches!</p>
+          <div class="cs-progress-bar">
+            <div class="cs-progress-fill"></div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-light);margin-top:1rem;">Collection launching soon...</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+         <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
+  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+  
+  <div class="logo-text">
+    <span class="brand-name">Markhor</span>
+    <span class="brand-tagline">Collections</span>
+  </div>
+</a>
+        <p>Suite for the Modern Journey. Premium clothing that blends style, quality, and responsibility.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Returns</a>
+        <a href="#">Delivery</a>
+        <a href="#">Shipping</a>
+        <a href="contact.html">Contact us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="checkout.html">Your Cart</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© MARKHOR COLLECTIONS · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a></span>
+      <span>Designed with ♥</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ============================================================
+       SHOP PAGE JAVASCRIPT
+       - Category tab switching
+       - Sidebar filter logic (size, color, price)
+       - Dynamic product rendering
+       - URL param support (?category=men, ?search=query)
+       ============================================================ */
+
+    /* ── STATE VARIABLES ── */
+    let activeCategory = 'all';  // Current active tab
+    let activeFilters = {
+      sizes: [],
+      colors: [],
+      maxPrice: 3500
+    };
+    let activeSort = 'featured';
+
+    /* ── RENDER PRODUCTS ── */
+    /* Renders product cards into the grid based on current state */
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      const noResults = document.getElementById('noResults');
+      const comingSoon = document.getElementById('comingSoonSection');
+      const productsBar = document.getElementById('productsBar');
+
+      // Hide/show Coming Soon for Women & Kids categories
+      // These categories have NO men's products - only coming soon
+      if (activeCategory === 'women' || activeCategory === 'kids') {
+        grid.innerHTML = '';
+        noResults.style.display = 'none';
+        comingSoon.classList.add('active');
+        productsBar.style.display = 'none';
+        // Update coming soon icon
+        document.querySelector('.cs-icon').textContent = activeCategory === 'women' ? '🌸' : '👶';
+        return;
+      }
+
+      comingSoon.classList.remove('active');
+      productsBar.style.display = 'flex';
+
+      // Start with all products, filter by category
+      let filtered = PRODUCTS.filter(p => {
+        if (activeCategory === 'men') return p.category === 'men';
+        return true; // 'all' shows everything
+      });
+
+      // Apply size filter (if any sizes checked, product must have at least one)
+      if (activeFilters.sizes.length > 0) {
+        filtered = filtered.filter(p =>
+          activeFilters.sizes.some(s => p.sizes.includes(s))
+        );
+      }
+
+      // Apply color filter
+      if (activeFilters.colors.length > 0) {
+        filtered = filtered.filter(p =>
+          activeFilters.colors.some(c => p.colors.includes(c))
+        );
+      }
+
+      // Apply price range
+      filtered = filtered.filter(p => p.price <= activeFilters.maxPrice);
+
+      // Apply sort
+      if (activeSort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+      else if (activeSort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+      else if (activeSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+      // Update count
+      document.getElementById('productCount').textContent = filtered.length;
+
+      // Show/hide no results
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noResults.style.display = 'block';
+        return;
+      }
+      noResults.style.display = 'none';
+
+      // Render product cards
+      grid.innerHTML = filtered.map(p => `
+        <div class="product-card reveal">
+          <a href="product.html?id=${p.id}">
+            <div class="card-img-wrap">
+              <img src="${p.image}" alt="${p.name}" loading="lazy">
+              ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+              <div class="card-actions">
+                <button class="card-action-btn" title="Quick Add"
+                  onclick="event.preventDefault(); addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+                  <i class="fas fa-shopping-bag"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-info">
+              <div class="card-category">Men's Collection</div>
+              <div class="card-name">${p.name}</div>
+              <div class="card-price">Rs. ${p.price.toLocaleString()}</div>
+            </div>
+          </a>
+          <button class="card-add-btn"
+            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+            <i class="fas fa-plus"></i> Add to Cart
+          </button>
+        </div>
+      `).join('');
+
+      initRevealAnimations();
+    }
+
+    /* ── CATEGORY TAB SWITCHING ── */
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeCategory = tab.dataset.cat;
+        renderProducts();
+      });
+    });
+
+    /* ── SIZE FILTER ── */
+    document.querySelectorAll('input[name="size"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        activeFilters.sizes = [...document.querySelectorAll('input[name="size"]:checked')]
+          .map(el => el.value);
+        renderProducts();
+      });
+    });
+
+    /* ── COLOR FILTER ── */
+    document.querySelectorAll('input[name="color"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        activeFilters.colors = [...document.querySelectorAll('input[name="color"]:checked')]
+          .map(el => el.value);
+        renderProducts();
+      });
+    });
+
+    /* ── PRICE RANGE SLIDER ── */
+    const priceSlider = document.getElementById('priceSlider');
+    const priceDisplay = document.getElementById('priceDisplay');
+    priceSlider.addEventListener('input', () => {
+      activeFilters.maxPrice = parseInt(priceSlider.value);
+      priceDisplay.textContent = `Up to Rs. ${parseInt(priceSlider.value).toLocaleString()}`;
+      renderProducts();
+    });
+
+    /* ── SORT ── */
+    document.getElementById('sortSelect').addEventListener('change', e => {
+      activeSort = e.target.value;
+      renderProducts();
+    });
+
+    /* ── CLEAR ALL FILTERS ── */
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.querySelectorAll('input[name="size"], input[name="color"]').forEach(cb => cb.checked = false);
+      priceSlider.value = 3500;
+      priceDisplay.textContent = 'Up to Rs. 3,500';
+      activeFilters = { sizes: [], colors: [], maxPrice: 3500 };
+      renderProducts();
+    });
+
+    /* ── FILTER SECTION COLLAPSE/EXPAND ── */
+    document.querySelectorAll('.filter-title').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('.filter-section').classList.toggle('collapsed');
+      });
+    });
+
+    /* ── URL PARAMS: pre-select category or search ── */
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCat = urlParams.get('category');
+    if (urlCat) {
+      const matchTab = document.querySelector(`.cat-tab[data-cat="${urlCat}"]`);
+      if (matchTab) {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        matchTab.classList.add('active');
+        activeCategory = urlCat;
+      }
+    }
+
+    /* ── INITIAL RENDER ── */
+    renderProducts();
+  </script>
+</body>
+</html>
