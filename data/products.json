@@ -1,3 +1,46 @@
 {
-  "items": []
+  "items": [
+    {
+      "shipping": "2-3 Business Days"
+    },
+    {
+      "badge": "New Arrival",
+      "price": 3500,
+      "name": "Stripped Half-Zip Polo Shirt",
+      "shipping": "2-3 Business Days",
+      "colors": [
+        "Dark Green",
+        "Dark Brown",
+        "Olive Green",
+        "Beige"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "colorImagesList": [
+        {
+          "colorName": "Dark Green",
+          "imgUrl": "assets/poloshirt.jpeg"
+        },
+        {
+          "colorName": "Dark Brown",
+          "imgUrl": "assets/poloshirt2.jpeg"
+        },
+        {
+          "colorName": "Olive Green",
+          "imgUrl": "assets/poloshirt3.jpeg"
+        },
+        {
+          "colorName": "Beige",
+          "imgUrl": "assets/poloshirt4.jpeg"
+        }
+      ],
+      "image": "assets/poloshirt.jpeg",
+      "description": "Experience the perfect fusion of heritage style and modern streetwear with our Stripped Half-Zip Polo. Crafted from breathable, high-end knit fabric, its unique textured stripes and sleek metal zip offer a sharp, sophisticated edge. Whether it’s a casual brunch or a night out, this versatile essential ensures you stand out with effortless luxury",
+      "category": "men"
+    }
+  ]
 }
