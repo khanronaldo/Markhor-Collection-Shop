@@ -22,7 +22,6 @@ collections:
               - { label: "Category", name: "category", widget: "select", options: ["men", "women", "kids"] }
               - { label: "Price", name: "price", widget: "number", value_type: "int" }
               - { label: "Main Image", name: "image", widget: "image" }
-              - { label: "Main Image", name: "image", widget: "image" }
               - { label: "Sizes", name: "sizes", widget: "select", multiple: true, options: ["S", "M", "L", "XL"] }
               - { label: "Colors Available", name: "colors", widget: "list", field: {label: "Color", name: "color", widget: "string"} }
               - { label: "Badge (e.g., Bestseller)", name: "badge", widget: "string", required: false }
