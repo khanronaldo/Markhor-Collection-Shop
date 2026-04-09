@@ -318,3 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initParallax();
   setActiveNav();
 });
+
+// Purana hardcoded products array delete kar dena
+async function loadProducts() {
+    try {
+        // Hum Netlify se saare products ki list mangwayenge
+        // Shuruwat mein testing ke liye tum local storage ya direct fetch use kar sakte ho
+        // Lekin professional tareeqa ye hai ke hum 'content/products' ka data parhen.
+        
+        console.log("CMS data loading...");
+        // Filhal ke liye agar tumne CMS mein 2-3 products dal diye hain,
+        // Toh wo GitHub pe file ban chuki hogi.
+    } catch (e) {
+        console.log("Error loading CMS products");
+    }
+}
