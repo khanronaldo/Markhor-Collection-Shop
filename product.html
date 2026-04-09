@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ============================================================
-       MARKHOR COLLECTIONS - Product Detail Page (product.html)
-       Features: Product zoom, size/color selector, quantity 
-                 increment/decrement, Add to Cart, Specifications
-       ============================================================ -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product – Markhor Collections</title>
@@ -42,21 +37,27 @@
       align-items: start;
     }
 
-    /* ── LEFT: IMAGE SECTION ── */
+    /* ── LEFT: IMAGE SECTION (FIXED SIZING) ── */
     .product-image-section {}
     .product-main-image {
       position: relative;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      background: var(--gray-light);
+      background: #f9f9f9; /* Professional Light Background */
       cursor: zoom-in;
       box-shadow: var(--shadow-lg);
+      /* Professional aspect ratio */
+      aspect-ratio: 3/4; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .product-main-image img {
       width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      transition: transform 0.4s ease;
+      height: 100%;
+      object-fit: cover; /* Prevents stretching */
+      object-position: top; /* Keeps the focus on collar/chest area */
+      transition: transform 0.4s ease, opacity 0.3s ease;
       display: block;
     }
     /* Zoom effect on hover */
@@ -75,6 +76,7 @@
       gap: 5px;
       opacity: 0;
       transition: var(--transition);
+      pointer-events: none;
     }
     .product-main-image:hover .zoom-hint { opacity: 1; }
 
@@ -304,11 +306,9 @@
 </head>
 <body>
 
-  <!-- Announcement Bar -->
   <div class="announcement-bar">
   </div>
 
-  <!-- ── HEADER ─────────────────────────────────────────────────── -->
   <header class="site-header">
     <div class="header-inner">
        <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
@@ -381,7 +381,7 @@
     width: 100% !important;
     height: 100vh !important;
     background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(5px) !important; /* Premium blur effect */
+    backdrop-filter: blur(5px) !important;
     z-index: 9998 !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -392,18 +392,17 @@
   .mobile-nav {
     position: fixed !important;
     top: 0 !important;
-    right: -100%; /* Default hidden */
+    right: -100%;
     width: 300px !important;
     height: 100vh !important;
-    background-color: #0A1128 !important; /* Premium Navy Blue */
+    background-color: #0A1128 !important;
     z-index: 9999 !important;
     display: flex !important;
     flex-direction: column !important;
     box-shadow: -15px 0 30px rgba(0,0,0,0.7) !important;
-    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important; /* Smooth snappy slide */
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
-  /* Drawer Header */
   .drawer-header {
     display: flex !important;
     justify-content: space-between !important;
@@ -422,10 +421,9 @@
 
   .close-btn:hover {
     color: #D4AF37 !important;
-    transform: rotate(90deg) !important; /* Cool rotation on hover */
+    transform: rotate(90deg) !important;
   }
 
-  /* Links Styling (Sleek and Modern) */
   .drawer-links {
     display: flex !important;
     flex-direction: column !important;
@@ -444,15 +442,13 @@
     position: relative !important;
   }
 
-  /* Hover Effect: Text shifts right and turns gold */
   .drawer-links a:hover {
     color: #D4AF37 !important;
     padding-left: 10px !important; 
   }
 
-  /* Bottom Footer (Logo Space) */
   .drawer-footer {
-    margin-top: auto !important; /* Pushes footer to the absolute bottom */
+    margin-top: auto !important;
     padding: 2rem !important;
     background: rgba(0, 0, 0, 0.2) !important;
     display: flex !important;
@@ -491,57 +487,45 @@
   function closeDrawer() {
     const drawer = document.getElementById('mobile-drawer');
     const overlay = document.getElementById('mobile-overlay');
-    
-    if (drawer) drawer.style.right = '-100%'; // Hide drawer
-    
+    if (drawer) drawer.style.right = '-100%';
     if (overlay) {
-      overlay.style.opacity = '0'; // Fade out overlay
-      overlay.style.pointerEvents = 'none'; // Disable clicks on overlay
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
     }
   }
 
   function openDrawer() {
       const drawer = document.getElementById('mobile-drawer');
       const overlay = document.getElementById('mobile-overlay');
-      
-      if(drawer) drawer.style.right = '0'; // Slide in drawer
-      
+      if(drawer) drawer.style.right = '0';
       if(overlay) {
-        overlay.style.opacity = '1'; // Fade in overlay
-        overlay.style.pointerEvents = 'auto'; // Enable clicks on overlay
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
       }
   }
 </script>
   </header>
 
-  <!-- ── PRODUCT DETAIL ─────────────────────────────────────────── -->
   <div class="product-page">
 
-    <!-- Breadcrumb - from screenshot 14 -->
     <nav class="product-breadcrumb" id="productBreadcrumb">
       <a href="shop.html">All products</a>
       <span>/</span>
       <a href="shop.html?category=men">Men</a>
       <span>/</span>
-      <a href="shop.html?category=men">pents</a>
-      <span>/</span>
       <span id="breadcrumbProduct">Loading...</span>
     </nav>
 
-    <!-- Product Detail Grid -->
     <div class="product-grid" id="productGrid">
-      <!-- Injected by JS -->
       <div style="text-align:center;padding:4rem;color:var(--text-light);">Loading product...</div>
     </div>
 
-    <!-- Specifications Section - from screenshot 15 -->
     <div class="product-specs-section" id="specificationsSection" style="display:none;">
       <h2 class="specs-title">Specifications</h2>
       <table class="specs-table" id="specsTable"></table>
     </div>
   </div>
 
-  <!-- Related Products -->
   <section class="related-section">
     <div class="container">
       <div class="section-header">
@@ -553,17 +537,12 @@
     </div>
   </section>
 
-  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
         <a href="index.html" class="header-logo" style="display: flex; align-items: center; text-decoration: none;">
-  <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
-  
-  <div class="logo-text">
-    
-  </div>
-</a>
+          <img src="assets/logo.png" alt="Markhor Logo" style="width: 90px; height: auto; margin-right: 15px; object-fit: contain;">
+        </a>
         <p>Suite for the Modern Journey.</p>
       </div>
       <div class="footer-col">
@@ -596,37 +575,28 @@
   <script src="main.js"></script>
   <script>
     /* ============================================================
-       PRODUCT DETAIL PAGE JAVASCRIPT
-       - Load product from URL ?id= param
-       - Handle size/color/quantity selection
-       - Add to Cart with selected options
-       - Render specifications table
-       - Render related products
+        PRODUCT DETAIL PAGE JAVASCRIPT
        ============================================================ */
 
-    /* ── COLOR DOTS MAP ── */
-    /* Maps color names to CSS values */
     const COLOR_MAP = {
       'black': '#111111',
       'white': '#f5f5f5',
       'blue': '#3b6cc5',
       'dark blue': '#1a2d6e',
       'gray': '#888888',
-      'cream': '#f5edd8'
+      'cream': '#f5edd8',
+      'navy': '#000080'
     };
 
-    /* ── PRODUCT STATE ── */
     let currentProduct = null;
     let selectedSize = '';
     let selectedColor = '';
     let quantity = 1;
 
-    /* ── LOAD PRODUCT FROM URL PARAM ── */
     function loadProduct() {
       const params = new URLSearchParams(window.location.search);
       const productId = params.get('id');
 
-      // Find product in PRODUCTS array (from main.js)
       currentProduct = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0];
 
       if (!currentProduct) {
@@ -634,27 +604,20 @@
         return;
       }
 
-      // Default selections
       selectedSize = currentProduct.sizes[0];
       selectedColor = currentProduct.colors[0];
 
-      // Update page title
       document.title = `${currentProduct.name} – Markhor Collections`;
-
-      // Update breadcrumb
       document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
 
-      // Render the product detail HTML
       renderProductDetail();
       renderSpecifications();
       renderRelatedProducts();
     }
 
-    /* ── RENDER PRODUCT DETAIL ── */
     function renderProductDetail() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = `
-        <!-- LEFT: Product Image with Zoom -->
         <div class="product-image-section reveal-left">
           <div class="product-main-image" id="productImageWrap">
             <img src="${currentProduct.image}" alt="${currentProduct.name}" id="productMainImg">
@@ -664,14 +627,11 @@
           </div>
         </div>
 
-        <!-- RIGHT: Product Info -->
         <div class="product-info-section reveal-right">
-          <!-- Product Name + Price (from screenshot 14) -->
           <h1 class="product-name">${currentProduct.name}</h1>
           <div class="product-price-display">Rs. ${currentProduct.price.toLocaleString()}</div>
           <div class="product-divider"></div>
 
-          <!-- Size Selector -->
           <span class="option-label">size</span>
           <div class="size-options" id="sizeOptions">
             ${currentProduct.sizes.map(s => `
@@ -680,13 +640,12 @@
             `).join('')}
           </div>
 
-          <!-- Colour Selector (from screenshot 14 - black, blue, dark blue) -->
           <span class="option-label">colour</span>
           <div class="color-options" id="colorOptions">
             ${currentProduct.colors.map(c => `
               <button class="color-btn ${c === selectedColor ? 'selected' : ''}" 
                 data-color="${c}" onclick="selectColor('${c}')">
-                <span class="color-dot" style="background:${COLOR_MAP[c] || '#ccc'};"></span>
+                <span class="color-dot" style="background:${COLOR_MAP[c] || c};"></span>
                 ${c}
               </button>
             `).join('')}
@@ -694,7 +653,6 @@
 
           <div class="product-divider"></div>
 
-          <!-- Quantity + Add to Cart (from screenshot 14) -->
           <div class="quantity-row">
             <div class="quantity-control">
               <button class="qty-btn" onclick="changeQty(-1)">
@@ -714,21 +672,18 @@
             </button>
           </div>
 
-          <!-- Product Meta (from screenshot 14) -->
           <div class="product-meta">
             <span><i class="fas fa-file-contract"></i> <a href="#">Terms and Conditions</a></span>
-            <span><i class="fas fa-truck"></i> Shipping: ${currentProduct.shipping}</span>
+            <span><i class="fas fa-truck"></i> Shipping: ${currentProduct.shipping || 'Standard Delivery'}</span>
           </div>
 
-          <!-- Description -->
           <div class="product-divider"></div>
-          <p style="font-size:0.85rem;color:var(--text-mid);line-height:1.9;">${currentProduct.description}</p>
+          <p style="font-size:0.85rem;color:var(--text-mid);line-height:1.9;">${currentProduct.description || 'Premium quality fabric tailored for perfection.'}</p>
         </div>
       `;
-      initRevealAnimations();
+      if(typeof initRevealAnimations === 'function') initRevealAnimations();
     }
 
-    /* ── SIZE SELECTION ── */
     function selectSize(size) {
       selectedSize = size;
       document.querySelectorAll('.size-btn').forEach(btn => {
@@ -736,90 +691,82 @@
       });
     }
 
-    /* ── COLOR SELECTION ── */
+    /* ── UPDATED COLOR SELECTION (WITH IMAGE CHANGER) ── */
     function selectColor(color) {
       selectedColor = color;
+      
+      // Update Button UI
       document.querySelectorAll('.color-btn').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.color === color);
       });
+
+      // Change Image Logic
+      const mainImg = document.getElementById('productMainImg');
+      if (mainImg && currentProduct.colorImages && currentProduct.colorImages[color]) {
+        // Simple fade effect
+        mainImg.style.opacity = '0.3';
+        setTimeout(() => {
+          mainImg.src = currentProduct.colorImages[color];
+          mainImg.style.opacity = '1';
+        }, 150);
+      }
     }
 
-    /* ── QUANTITY CHANGE ── */
     function changeQty(delta) {
       quantity = Math.max(1, Math.min(99, quantity + delta));
-      document.getElementById('qtyDisplay').value = quantity;
+      const display = document.getElementById('qtyDisplay');
+      if(display) display.value = quantity;
     }
 
-    /* ── ADD TO CART HANDLER ── */
     function handleAddToCart() {
       if (!selectedSize || !selectedColor) {
-        showToast('⚠️ Please select size and color first.');
+        alert('Please select size and color first.');
         return;
       }
-      addToCart(currentProduct, selectedSize, selectedColor, quantity);
-      // Visual feedback on button
-      const btn = document.getElementById('addCartBtn');
-      btn.classList.add('added');
-      btn.innerHTML = '<i class="fas fa-check"></i> Added to Cart!';
-      setTimeout(() => {
-        btn.classList.remove('added');
-        btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to cart';
-      }, 2000);
+      
+      if(typeof addToCart === 'function') {
+         addToCart(currentProduct, selectedSize, selectedColor, quantity);
+         const btn = document.getElementById('addCartBtn');
+         btn.classList.add('added');
+         btn.innerHTML = '<i class="fas fa-check"></i> Added to Cart!';
+         setTimeout(() => {
+           btn.classList.remove('added');
+           btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to cart';
+         }, 2000);
+      }
     }
 
-    /* ── RENDER SPECIFICATIONS ── */
-    /* From screenshot 15 - size and colour specs */
     function renderSpecifications() {
       if (!currentProduct) return;
       const section = document.getElementById('specificationsSection');
       const table = document.getElementById('specsTable');
       section.style.display = 'block';
       table.innerHTML = `
-        <tr>
-          <td>size</td>
-          <td>${currentProduct.sizes.join(', ')}</td>
-        </tr>
-        <tr>
-          <td>colour</td>
-          <td>${currentProduct.colors.join(', ')}</td>
-        </tr>
-        <tr>
-          <td>Category</td>
-          <td>${currentProduct.category}</td>
-        </tr>
-        <tr>
-          <td>Shipping</td>
-          <td>${currentProduct.shipping}</td>
-        </tr>
+        <tr><td>Size</td><td>${currentProduct.sizes.join(', ')}</td></tr>
+        <tr><td>Colour</td><td>${currentProduct.colors.join(', ')}</td></tr>
+        <tr><td>Category</td><td>${currentProduct.category || 'Men'}</td></tr>
+        <tr><td>Shipping</td><td>${currentProduct.shipping || 'Fast Delivery'}</td></tr>
       `;
     }
 
-    /* ── RENDER RELATED PRODUCTS ── */
     function renderRelatedProducts() {
       const grid = document.getElementById('relatedGrid');
-      const related = PRODUCTS.filter(p => p.id !== currentProduct.id);
+      const related = PRODUCTS.filter(p => p.id !== currentProduct.id).slice(0, 4);
       grid.innerHTML = related.map(p => `
         <div class="product-card">
           <a href="product.html?id=${p.id}">
-            <div class="card-img-wrap">
-              <img src="${p.image}" alt="${p.name}" loading="lazy">
-              ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+            <div class="card-img-wrap" style="aspect-ratio:3/4; overflow:hidden;">
+              <img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; object-position:top;">
             </div>
             <div class="card-info">
-              <div class="card-category">Men's Collection</div>
               <div class="card-name">${p.name}</div>
               <div class="card-price">Rs. ${p.price.toLocaleString()}</div>
             </div>
           </a>
-          <button class="card-add-btn"
-            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
-            <i class="fas fa-plus"></i> Add to Cart
-          </button>
         </div>
       `).join('');
     }
 
-    /* ── INIT ── */
     loadProduct();
   </script>
 </body>

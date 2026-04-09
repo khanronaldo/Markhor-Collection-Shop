@@ -17,7 +17,13 @@ const PRODUCTS = [
     colors: ['black','blue','dark blue'],
     badge: 'Bestseller',
     description: 'Premium baggy cut trousers crafted for the modern man. Perfect blend of comfort and style.',
-    shipping: '2-3 Business Days'
+    shipping: '2-3 Business Days',
+    // NAYA SECTION ADDED YAHAN
+    colorImages: {
+      'black': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80',
+      'blue': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80',
+      'dark blue': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80'
+    }
   },
   {
     id: 'buggy-tshirt',
@@ -29,7 +35,13 @@ const PRODUCTS = [
     colors: ['black','white','blue'],
     badge: 'New',
     description: 'Oversized premium cotton t-shirt with a relaxed fit. Statement streetwear for every occasion.',
-    shipping: '2-3 Business Days'
+    shipping: '2-3 Business Days',
+    // NAYA SECTION ADDED YAHAN
+    colorImages: {
+      'black': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
+      'white': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
+      'blue': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80'
+    }
   },
   {
     id: 'nike-shoes',
@@ -41,7 +53,32 @@ const PRODUCTS = [
     colors: ['white','black'],
     badge: 'Premium',
     description: 'Authentic Nike sneakers combining iconic style with superior comfort and durability.',
-    shipping: '2-3 Business Days'
+    shipping: '2-3 Business Days',
+    // NAYA SECTION ADDED YAHAN
+    colorImages: {
+      'white': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+      'black': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'
+    }
+  },
+  {
+    id: 'stripped-polo-shirt',
+    name: 'Stripped Half Zip Polo Shirts',
+    category: 'men',
+    price: 2800,
+    // main tasveer use green-cream wali images_1.png ki
+    image: 'assets/poloshirt.jpeg', 
+    sizes: ['S','M','L','XL'],
+    colors: ['green-cream','brown-cream','olive-cream','beige-grey'],
+    badge: 'New Arrival',
+    description: 'Premium striped knit polo shirt with a stylish half-zip closure. Comfortable and versatile for any casual outing.',
+    shipping: '2-3 Business Days',
+    // NAYE PRODUCTS KE COLOR IMAGES BHI ADD KAR DIYE HAIN 👇
+    colorImages: {
+      'green-cream': 'assets/poloshirt.jpeg', // image_1.png link
+      'brown-cream': 'assets/poloshirt2.jpeg', // image_2.png link
+      'olive-cream': 'assets/poloshirt3.jpeg', // image_3.png link
+      'beige-grey': 'assets/poloshirt4.jpeg'  // image_4.png link
+    }
   }
 ];
 

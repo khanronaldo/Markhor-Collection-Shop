@@ -968,60 +968,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
-    <!-- ── MAIN PRODUCTS AREA ── -->
-    <main class="shop-main">
+   <main class="shop-main">
 
-      <!-- Category Tabs - from screenshot 7 -->
-      <div class="category-tabs">
-        <button class="cat-tab active" data-cat="all">
-          All Products
-        </button>
-        <button class="cat-tab" data-cat="men">
-          <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=100&q=60" alt="Men"> Men
-        </button>
-        <button class="cat-tab" data-cat="women">
-          <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=100&q=60" alt="Women"> Women
-        </button>
-        <button class="cat-tab" data-cat="kids">
-          <img src="https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=100&q=60" alt="Kids"> Kids
-        </button>
-      </div>
+    <div class="category-tabs">
+      <button class="cat-tab active" data-cat="all">
+        All Products
+      </button>
+      <button class="cat-tab" data-cat="men">
+        <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=100&q=60" alt="Men"> Men
+      </button>
+      <button class="cat-tab" data-cat="women">
+        <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=100&q=60" alt="Women"> Women
+      </button>
+      <button class="cat-tab" data-cat="kids">
+        <img src="https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=100&q=60" alt="Kids"> Kids
+      </button>
+    </div>
 
-      <!-- Products Count + Sort Bar -->
-      <div class="products-bar" id="productsBar">
-        <div class="products-count">Showing <strong id="productCount">3</strong> products</div>
-        <select class="sort-select" id="sortSelect">
-          <option value="featured">Sort By: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name">Name: A-Z</option>
-        </select>
-      </div>
+    <div class="products-bar" id="productsBar">
+      <div class="products-count">Showing <strong id="productCount">0</strong> products</div>
+      <select class="sort-select" id="sortSelect">
+        <option value="featured">Sort By: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name: A-Z</option>
+      </select>
+    </div>
 
-      <!-- Products Grid - rendered by JS -->
-      <div class="products-grid" id="productsGrid"></div>
+    <div class="products-grid" id="productsGrid"></div>
 
-      <!-- No Results Message -->
-      <div class="no-results-msg" id="noResults" style="display:none;">
-        <i class="fas fa-search"></i>
-        <p>No products match your filters. Try adjusting your selection.</p>
-      </div>
+    <div class="no-results-msg" id="noResults" style="display:none;">
+      <i class="fas fa-search"></i>
+      <p>No products match your filters. Try adjusting your selection.</p>
+    </div>
 
-      <!-- Coming Soon Section for Women/Kids categories -->
-      <!-- Only shown when women or kids tab is active -->
-      <div class="coming-soon-section" id="comingSoonSection">
-        <div class="coming-soon-big">
-          <div class="cs-icon">🌸</div>
-          <h2>Coming Soon</h2>
-          <p>We're working hard on this collection. Subscribe to be notified when it launches!</p>
-          <div class="cs-progress-bar">
-            <div class="cs-progress-fill"></div>
-          </div>
-          <p style="font-size:0.75rem;color:var(--text-light);margin-top:1rem;">Collection launching soon...</p>
+    <div class="coming-soon-section" id="comingSoonSection">
+      <div class="coming-soon-big">
+        <div class="cs-icon">🌸</div>
+        <h2>Coming Soon</h2>
+        <p>We're working hard on this collection. Subscribe to be notified when it launches!</p>
+        <div class="cs-progress-bar">
+          <div class="cs-progress-fill"></div>
         </div>
+        <p style="font-size:0.75rem;color:var(--text-light);margin-top:1rem;">Collection launching soon...</p>
       </div>
+    </div>
 
-    </main>
+  </main>
+
   </div>
 
   <!-- ── FOOTER ─────────────────────────────────────────────────── -->
@@ -1068,38 +1062,48 @@ document.addEventListener('DOMContentLoaded', () => {
   <script src="main.js"></script>
   <script>
     /* ============================================================
-       SHOP PAGE JAVASCRIPT
+       SHOP PAGE JAVASCRIPT (UPDATED BY GEMINI ✨)
        - Category tab switching
        - Sidebar filter logic (size, color, price)
        - Dynamic product rendering
-       - URL param support (?category=men, ?search=query)
+       - CART BUG FIXED (Dynamic Size/Color)
+       - COLOR SWATCHES & IMAGE CHANGE ADDED
        ============================================================ */
 
-    /* ── STATE VARIABLES ── */
-    let activeCategory = 'all';  // Current active tab
-    let activeFilters = {
-      sizes: [],
-      colors: [],
-      maxPrice: 3500
-    };
+    let activeCategory = 'all';
+    let activeFilters = { sizes: [], colors: [], maxPrice: 3500 };
     let activeSort = 'featured';
 
+    /* ── DYNAMIC IMAGE CHANGER FUNCTION ── */
+    window.changeProductImage = function(productId, color) {
+      const imgElement = document.getElementById(`img-${productId}`);
+      
+      // main.js ki PRODUCTS list mein se product dhoondo
+      const currentProduct = PRODUCTS.find(p => p.id === productId);
+      
+      // Agar product mil jaye aur uski colorImages bhi majood hon
+      if(imgElement && currentProduct && currentProduct.colorImages && currentProduct.colorImages[color]) {
+         // Asal tasveer change karo
+         imgElement.src = currentProduct.colorImages[color];
+         
+         // Smooth fade animation
+         imgElement.style.opacity = '0.5';
+         setTimeout(() => { imgElement.style.opacity = '1'; }, 200);
+      }
+    };
+
     /* ── RENDER PRODUCTS ── */
-    /* Renders product cards into the grid based on current state */
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
       const noResults = document.getElementById('noResults');
       const comingSoon = document.getElementById('comingSoonSection');
       const productsBar = document.getElementById('productsBar');
 
-      // Hide/show Coming Soon for Women & Kids categories
-      // These categories have NO men's products - only coming soon
       if (activeCategory === 'women' || activeCategory === 'kids') {
         grid.innerHTML = '';
         noResults.style.display = 'none';
         comingSoon.classList.add('active');
         productsBar.style.display = 'none';
-        // Update coming soon icon
         document.querySelector('.cs-icon').textContent = activeCategory === 'women' ? '🌸' : '👶';
         return;
       }
@@ -1107,38 +1111,27 @@ document.addEventListener('DOMContentLoaded', () => {
       comingSoon.classList.remove('active');
       productsBar.style.display = 'flex';
 
-      // Start with all products, filter by category
       let filtered = PRODUCTS.filter(p => {
         if (activeCategory === 'men') return p.category === 'men';
-        return true; // 'all' shows everything
+        return true; 
       });
 
-      // Apply size filter (if any sizes checked, product must have at least one)
       if (activeFilters.sizes.length > 0) {
-        filtered = filtered.filter(p =>
-          activeFilters.sizes.some(s => p.sizes.includes(s))
-        );
+        filtered = filtered.filter(p => activeFilters.sizes.some(s => p.sizes.includes(s)));
       }
 
-      // Apply color filter
       if (activeFilters.colors.length > 0) {
-        filtered = filtered.filter(p =>
-          activeFilters.colors.some(c => p.colors.includes(c))
-        );
+        filtered = filtered.filter(p => activeFilters.colors.some(c => p.colors.includes(c)));
       }
 
-      // Apply price range
       filtered = filtered.filter(p => p.price <= activeFilters.maxPrice);
 
-      // Apply sort
       if (activeSort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
       else if (activeSort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
       else if (activeSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
 
-      // Update count
       document.getElementById('productCount').textContent = filtered.length;
 
-      // Show/hide no results
       if (filtered.length === 0) {
         grid.innerHTML = '';
         noResults.style.display = 'block';
@@ -1146,16 +1139,41 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       noResults.style.display = 'none';
 
-      // Render product cards
-      grid.innerHTML = filtered.map(p => `
+      grid.innerHTML = filtered.map(p => {
+        
+        let colorSwatchesHTML = '';
+        let prioritizedColors = (p.colors && p.colors.length > 0) ? p.colors : [];
+
+        if (prioritizedColors.length > 0) {
+          colorSwatchesHTML = `
+            <div class="color-swatches" style="display:flex; gap:8px; margin-top:10px; z-index:10; position:relative;">
+              ${prioritizedColors.map(color => {
+                let bgColor = color.split('-')[0];
+                if(bgColor === 'dark blue') bgColor = 'darkblue'; 
+                
+                return `
+                <span class="swatch" 
+                      title="${color}"
+                      style="width:16px; height:16px; border-radius:50%; background-color:${bgColor}; border:1px solid #ccc; cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" 
+                      onclick="event.preventDefault(); changeProductImage('${p.id}', '${color}')">
+                </span>`;
+              }).join('')}
+            </div>
+          `;
+        }
+
+        const defaultSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : 'S';
+        const defaultColor = prioritizedColors.length > 0 ? prioritizedColors[0] : 'black';
+
+        return `
         <div class="product-card reveal">
           <a href="product.html?id=${p.id}">
             <div class="card-img-wrap">
-              <img src="${p.image}" alt="${p.name}" loading="lazy">
+              <img src="${p.image}" alt="${p.name}" loading="lazy" id="img-${p.id}">
               ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
               <div class="card-actions">
                 <button class="card-action-btn" title="Quick Add"
-                  onclick="event.preventDefault(); addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+                  onclick="event.preventDefault(); addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'}, '${defaultSize}', '${defaultColor}')">
                   <i class="fas fa-shopping-bag"></i>
                 </button>
               </div>
@@ -1164,19 +1182,25 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="card-category">Men's Collection</div>
               <div class="card-name">${p.name}</div>
               <div class="card-price">Rs. ${p.price.toLocaleString()}</div>
+              
+              ${colorSwatchesHTML}
+
             </div>
           </a>
           <button class="card-add-btn"
-            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'},'S','black')">
+            onclick="addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'}, '${defaultSize}', '${defaultColor}')">
             <i class="fas fa-plus"></i> Add to Cart
           </button>
         </div>
-      `).join('');
+        `;
+      }).join('');
 
-      initRevealAnimations();
+      if(typeof initRevealAnimations === 'function') {
+        initRevealAnimations();
+      }
     }
 
-    /* ── CATEGORY TAB SWITCHING ── */
+    /* ── EVENT LISTENERS ── */
     document.querySelectorAll('.cat-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
@@ -1186,56 +1210,57 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    /* ── SIZE FILTER ── */
     document.querySelectorAll('input[name="size"]').forEach(cb => {
       cb.addEventListener('change', () => {
-        activeFilters.sizes = [...document.querySelectorAll('input[name="size"]:checked')]
-          .map(el => el.value);
+        activeFilters.sizes = [...document.querySelectorAll('input[name="size"]:checked')].map(el => el.value);
         renderProducts();
       });
     });
 
-    /* ── COLOR FILTER ── */
     document.querySelectorAll('input[name="color"]').forEach(cb => {
       cb.addEventListener('change', () => {
-        activeFilters.colors = [...document.querySelectorAll('input[name="color"]:checked')]
-          .map(el => el.value);
+        activeFilters.colors = [...document.querySelectorAll('input[name="color"]:checked')].map(el => el.value);
         renderProducts();
       });
     });
 
-    /* ── PRICE RANGE SLIDER ── */
     const priceSlider = document.getElementById('priceSlider');
     const priceDisplay = document.getElementById('priceDisplay');
-    priceSlider.addEventListener('input', () => {
-      activeFilters.maxPrice = parseInt(priceSlider.value);
-      priceDisplay.textContent = `Up to Rs. ${parseInt(priceSlider.value).toLocaleString()}`;
-      renderProducts();
-    });
+    if(priceSlider && priceDisplay) {
+        priceSlider.addEventListener('input', () => {
+          activeFilters.maxPrice = parseInt(priceSlider.value);
+          priceDisplay.textContent = `Up to Rs. ${parseInt(priceSlider.value).toLocaleString()}`;
+          renderProducts();
+        });
+    }
 
-    /* ── SORT ── */
-    document.getElementById('sortSelect').addEventListener('change', e => {
-      activeSort = e.target.value;
-      renderProducts();
-    });
+    const sortSelect = document.getElementById('sortSelect');
+    if(sortSelect) {
+        sortSelect.addEventListener('change', e => {
+          activeSort = e.target.value;
+          renderProducts();
+        });
+    }
 
-    /* ── CLEAR ALL FILTERS ── */
-    document.getElementById('clearFilters').addEventListener('click', () => {
-      document.querySelectorAll('input[name="size"], input[name="color"]').forEach(cb => cb.checked = false);
-      priceSlider.value = 3500;
-      priceDisplay.textContent = 'Up to Rs. 3,500';
-      activeFilters = { sizes: [], colors: [], maxPrice: 3500 };
-      renderProducts();
-    });
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    if(clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', () => {
+          document.querySelectorAll('input[name="size"], input[name="color"]').forEach(cb => cb.checked = false);
+          if(priceSlider) {
+              priceSlider.value = 3500;
+              priceDisplay.textContent = 'Up to Rs. 3,500';
+          }
+          activeFilters = { sizes: [], colors: [], maxPrice: 3500 };
+          renderProducts();
+        });
+    }
 
-    /* ── FILTER SECTION COLLAPSE/EXPAND ── */
     document.querySelectorAll('.filter-title').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.closest('.filter-section').classList.toggle('collapsed');
       });
     });
 
-    /* ── URL PARAMS: pre-select category or search ── */
     const urlParams = new URLSearchParams(window.location.search);
     const urlCat = urlParams.get('category');
     if (urlCat) {

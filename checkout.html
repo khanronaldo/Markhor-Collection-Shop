@@ -646,29 +646,37 @@
 
       <!-- Customer Details Form -->
       <div class="customer-details">
-        <h3><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Your Details</h3>
-        <div class="details-grid">
-          <div class="cd-field">
-            <label>Full Name <span style="color:var(--gold)">*</span></label>
-            <input type="text" class="cd-input" id="cdName" placeholder="Your full name" required>
+        <form id="checkoutForm" name="orders" method="POST" data-netlify="true">
+          <input type="hidden" name="form-name" value="orders" />
+          
+          <input type="hidden" name="order_items" id="netCartItems">
+          <input type="hidden" name="payment_method" id="netPaymentMethod">
+          <input type="hidden" name="total_bill" id="netTotalBill">
+
+          <h3><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Your Details</h3>
+          <div class="details-grid">
+            <div class="cd-field">
+              <label>Full Name <span style="color:var(--gold)">*</span></label>
+              <input type="text" class="cd-input" id="cdName" name="customer_name" placeholder="Your full name" required>
+            </div>
+            <div class="cd-field">
+              <label>Phone Number <span style="color:var(--gold)">*</span></label>
+              <input type="tel" class="cd-input" id="cdPhone" name="customer_phone" placeholder="+92 300 0000000" required>
+            </div>
+            <div class="cd-field">
+              <label>Email</label>
+              <input type="email" class="cd-input" id="cdEmail" name="customer_email" placeholder="Optional">
+            </div>
+            <div class="cd-field">
+              <label>City</label>
+              <input type="text" class="cd-input" id="cdCity" name="customer_city" placeholder="Your city">
+            </div>
+            <div class="cd-field full">
+              <label>Delivery Address <span style="color:var(--gold)">*</span></label>
+              <input type="text" class="cd-input" id="cdAddress" name="customer_address" placeholder="Full delivery address" required>
+            </div>
           </div>
-          <div class="cd-field">
-            <label>Phone Number <span style="color:var(--gold)">*</span></label>
-            <input type="tel" class="cd-input" id="cdPhone" placeholder="+92 300 0000000" required>
-          </div>
-          <div class="cd-field">
-            <label>Email</label>
-            <input type="email" class="cd-input" id="cdEmail" placeholder="Optional">
-          </div>
-          <div class="cd-field">
-            <label>City</label>
-            <input type="text" class="cd-input" id="cdCity" placeholder="Your city">
-          </div>
-          <div class="cd-field full">
-            <label>Delivery Address <span style="color:var(--gold)">*</span></label>
-            <input type="text" class="cd-input" id="cdAddress" placeholder="Full delivery address" required>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -801,18 +809,9 @@
   </footer>
 
   <script src="main.js"></script>
-  <script>
-    /* ============================================================
-       CHECKOUT PAGE JAVASCRIPT
-       - Render cart items from localStorage
-       - Calculate subtotal, tax, total
-       - Payment method selection
-       - Confirm Order → generate invoice → open WhatsApp
-       ============================================================ */
-
+ <script>
     /* ── ADMIN WHATSAPP ── */
-    /* IMPORTANT: Replace with real admin WhatsApp number */
-    const CHECKOUT_WHATSAPP = '923001234567';
+    const CHECKOUT_WHATSAPP = '923115341514'; // <-- Apna number check kar lena
 
     /* ── SELECTED PAYMENT STATE ── */
     let selectedPaymentMethod = '';
@@ -834,151 +833,97 @@
 
       container.innerHTML = cart.map((item, i) => `
         <div class="cart-item" id="cartItem${i}">
-          <!-- Product thumbnail -->
-          <img 
-            src="${item.image}" 
-            alt="${item.name}" 
-            class="cart-item-img"
-            loading="lazy"
-          >
-          <!-- Product info - matches screenshot 16 format: "buggy pent - S, black" -->
+          <img src="${item.image}" alt="${item.name}" class="cart-item-img" loading="lazy">
           <div class="cart-item-details">
             <div class="cart-item-name">${item.name}</div>
             <div class="cart-item-meta">${item.size ? item.size + ', ' : ''}${item.color || ''}</div>
-            <!-- Remove and Save for Later actions like screenshot 16 -->
             <div class="cart-item-actions">
               <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
             </div>
           </div>
-          <!-- Quantity Control -->
           <div class="cart-qty-control">
-            <button class="cart-qty-btn" onclick="changeItemQty(${i}, -1)">
-              <i class="fas fa-minus"></i>
-            </button>
+            <button class="cart-qty-btn" onclick="changeItemQty(${i}, -1)"><i class="fas fa-minus"></i></button>
             <span class="cart-qty-num" id="itemQty${i}">${item.quantity}</span>
-            <button class="cart-qty-btn" onclick="changeItemQty(${i}, 1)">
-              <i class="fas fa-plus"></i>
-            </button>
+            <button class="cart-qty-btn" onclick="changeItemQty(${i}, 1)"><i class="fas fa-plus"></i></button>
           </div>
-          <!-- Price -->
-          <div class="cart-item-price">
-            Rs. ${(item.price * item.quantity).toLocaleString()}
-          </div>
+          <div class="cart-item-price">Rs. ${(item.price * item.quantity).toLocaleString()}</div>
         </div>
       `).join('');
-
       updateTotals(cart);
     }
 
-    /* ── REMOVE ITEM ── */
-    function removeItem(index) {
-      removeFromCart(index);
-      renderCartItems();
-    }
+    function removeItem(index) { removeFromCart(index); renderCartItems(); }
+    function changeItemQty(index, delta) { updateCartQuantity(index, delta); renderCartItems(); }
 
-    /* ── CHANGE ITEM QUANTITY ── */
-    function changeItemQty(index, delta) {
-      updateCartQuantity(index, delta);
-      renderCartItems();
-    }
-
-    /* ── UPDATE TOTALS ── */
     function updateTotals(cart) {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const tax = 0; /* Tax is 0.00 as shown in screenshot 16 */
+      const tax = 0;
       const total = subtotal + tax;
-
       document.getElementById('subtotalVal').textContent = `Rs. ${subtotal.toLocaleString()}`;
       document.getElementById('taxVal').textContent = `Rs. ${tax.toLocaleString()}`;
       document.getElementById('totalVal').textContent = `Rs. ${total.toLocaleString()}`;
     }
 
-    /* ── SELECT PAYMENT METHOD ── */
     function selectPayment(label, methodName, detail) {
-      /* Remove selected from all options */
       document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-      /* Add selected to clicked option */
       label.classList.add('selected');
       selectedPaymentMethod = methodName;
       selectedPaymentDetail = detail;
-
-      /* Show payment details */
       const infoEl = document.getElementById('paymentInfo');
       infoEl.classList.add('visible');
       infoEl.textContent = `${methodName} — ${detail}`;
     }
 
-    /* ── CONFIRM ORDER → WHATSAPP INVOICE ── */
-    /* 
-       This function:
-       1. Validates the form
-       2. Generates a detailed invoice string
-       3. Opens WhatsApp with the invoice pre-filled as a message
-       Admin can then manually process the payment.
-    */
+    /* ── CONFIRM ORDER (FIXED BY GEMINI) ── */
     function confirmOrder() {
       const cart = getCart();
-      if (cart.length === 0) {
-        showToast('⚠️ Your cart is empty!');
-        return;
-      }
+      if (cart.length === 0) { showToast('⚠️ Your cart is empty!'); return; }
 
-      /* Get customer details */
       const name = document.getElementById('cdName').value.trim();
       const phone = document.getElementById('cdPhone').value.trim();
       const email = document.getElementById('cdEmail').value.trim();
       const city = document.getElementById('cdCity').value.trim();
       const address = document.getElementById('cdAddress').value.trim();
 
-      /* Validate required fields */
-      if (!name) { showToast('⚠️ Please enter your full name.'); return; }
-      if (!phone) { showToast('⚠️ Please enter your phone number.'); return; }
-      if (!address) { showToast('⚠️ Please enter your delivery address.'); return; }
-      if (!selectedPaymentMethod) { showToast('⚠️ Please select a payment method.'); return; }
+      if (!name || !phone || !address || !selectedPaymentMethod) {
+        showToast('⚠️ Please fill all required fields!');
+        return;
+      }
 
-      /* Calculate total */
       const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-
-      /* Build invoice string for WhatsApp */
-      const orderDate = new Date().toLocaleDateString('en-PK', {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
-
       let itemsText = '';
       cart.forEach((item, i) => {
-        itemsText += `  ${i + 1}. ${item.name} (${item.size || 'N/A'}, ${item.color || 'N/A'}) x${item.quantity} = Rs. ${(item.price * item.quantity).toLocaleString()}\n`;
+        itemsText += `${i + 1}. ${item.name} (${item.size || 'N/A'}) x${item.quantity} = Rs. ${item.price * item.quantity}\n`;
       });
 
-      const invoice =
-        `🛍️ *NEW ORDER — Markhor Collections*\n` +
-        `📅 Date: ${orderDate}\n` +
-        `─────────────────────────\n\n` +
-        `👤 *CUSTOMER DETAILS*\n` +
-        `Name: ${name}\n` +
-        `Phone: ${phone}\n` +
-        `Email: ${email || 'Not provided'}\n` +
-        `City: ${city || 'Not provided'}\n` +
-        `Address: ${address}\n\n` +
-        `🛒 *ORDER ITEMS*\n` +
-        `${itemsText}\n` +
-        `─────────────────────────\n` +
-        `💰 Subtotal: Rs. ${subtotal.toLocaleString()}\n` +
-        `🚚 Delivery: FREE\n` +
-        `💵 *TOTAL: Rs. ${subtotal.toLocaleString()}*\n\n` +
-        `💳 *PAYMENT METHOD*\n` +
-        `${selectedPaymentMethod} — ${selectedPaymentDetail}\n\n` +
-        `Please confirm and provide payment details. Thank you!`;
+      // --- NETLIFY SILENT SUBMIT (DATA SAVING) ---
+      const formData = new FormData();
+      formData.append("form-name", "orders"); 
+      formData.append("Name", name);
+      formData.append("Phone", phone);
+      formData.append("Address", `${address}, ${city}`);
+      formData.append("Order_Summary", itemsText);
+      formData.append("Total_Bill", `Rs. ${subtotal}`);
+      formData.append("Payment", selectedPaymentMethod);
 
-      /* Open WhatsApp with pre-filled invoice */
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString(),
+      })
+      .then(() => console.log("Success: Data saved to Netlify"))
+      .catch((error) => console.log("Error:", error));
+
+      // --- WHATSAPP REDIRECT ---
+      const invoice = `🛍️ *NEW ORDER — Markhor*\n👤 *CUSTOMER:* ${name}\n📞 *PHONE:* ${phone}\n📍 *ADDRESS:* ${address}, ${city}\n\n🛒 *ITEMS:*\n${itemsText}\n💰 *TOTAL: Rs. ${subtotal.toLocaleString()}*\n💳 *METHOD:* ${selectedPaymentMethod}`;
+      
       const waLink = `https://wa.me/${CHECKOUT_WHATSAPP}?text=${encodeURIComponent(invoice)}`;
       window.open(waLink, '_blank');
-
-      showToast('✓ WhatsApp opened with your order details!');
+      showToast('✓ Order Placed!');
     }
 
-    /* ── INIT ── */
     renderCartItems();
+
   </script>
 </body>
 </html>
