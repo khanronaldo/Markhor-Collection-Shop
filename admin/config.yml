@@ -34,3 +34,5 @@ collections:
                 fields:
                   - { label: "Color Name (must match exactly)", name: "colorName", widget: "string" }
                   - { label: "Image", name: "imgUrl", widget: "image" }
+
+                  identifier_field: name

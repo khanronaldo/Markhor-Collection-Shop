@@ -599,38 +599,41 @@
     let quantity = 1;
 
     function loadProduct() {
-      const params = new URLSearchParams(window.location.search);
-      const productId = params.get('id');
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id'); // URL se ID uthayi
 
-      // Ab hum JSON file se data mangwa rahe hain
-      fetch('data/products.json')
-        .then(response => response.json())
-        .then(data => {
-          ALL_PRODUCTS = data.items;
-          
-          currentProduct = ALL_PRODUCTS.find(p => p.id === productId) || ALL_PRODUCTS[0];
+  fetch('data/products.json')
+    .then(response => response.json())
+    .then(data => {
+      ALL_PRODUCTS = data.items;
 
-          if (!currentProduct) {
-            document.getElementById('productGrid').innerHTML = '<p>Product not found. <a href="shop.html">Back to Shop</a></p>';
-            return;
-          }
+      // 1. Pehle ID se dhoondo
+      currentProduct = ALL_PRODUCTS.find(p => p.id === productId);
 
-          // Sizes aur colors handle karne ke liye (agar empty hon)
-          selectedSize = (currentProduct.sizes && currentProduct.sizes.length > 0) ? currentProduct.sizes[0] : '';
-          selectedColor = (currentProduct.colors && currentProduct.colors.length > 0) ? currentProduct.colors[0] : '';
+      // 2. Agar ID se nahi mila, toh NAME se dhoondo (Case insensitive)
+      if (!currentProduct) {
+        currentProduct = ALL_PRODUCTS.find(p => 
+          p.name.toLowerCase().replace(/\s+/g, '-') === productId.toLowerCase() ||
+          p.name === productId
+        );
+      }
 
-          document.title = `${currentProduct.name} – Markhor Collections`;
-          document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
+      // 3. Agar ab bhi nahi mila, toh jo bhi pehla product hai wo dikha do (Blank page se behtar hai)
+      if (!currentProduct && ALL_PRODUCTS.length > 0) {
+        currentProduct = ALL_PRODUCTS[0];
+      }
 
-          renderProductDetail();
-          renderSpecifications();
-          renderRelatedProducts();
-        })
-        .catch(error => {
-          console.error("Error fetching product:", error);
-          document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:4rem;color:var(--text-light);">Error loading product details. Please try again.</div>';
-        });
-    }
+      if (!currentProduct) {
+        document.getElementById('productGrid').innerHTML = '<h2>No products available.</h2>';
+        return;
+      }
+
+      // Render functions
+      renderProductDetail();
+      renderSpecifications();
+      renderRelatedProducts();
+    });
+}
 
     function renderProductDetail() {
       const grid = document.getElementById('productGrid');
@@ -800,6 +803,6 @@
     // Call function to start loading
     loadProduct();
   </script>
-  
+
 </body>
 </html>
