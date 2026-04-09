@@ -1,86 +1,52 @@
 /* ============================================================
    MARKHOR COLLECTIONS - Shared JavaScript
    Handles: Cart (localStorage), Search, Header scroll,
-            Reveal animations, Toast notifications
+            Reveal animations, Toast notifications,
+            Product Fetching (Netlify CMS)
    ============================================================ */
 
-/* ─── PRODUCT DATA ─────────────────────────────────────────── */
-/* Central product catalog - used for search and cart display */
-const PRODUCTS = [
-  {
-    id: 'buggy-pent',
-    name: 'Buggy Pent',
-    category: 'men',
-    price: 2500,
-    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80',
-    sizes: ['S','M','L','XL'],
-    colors: ['black','blue','dark blue'],
-    badge: 'Bestseller',
-    description: 'Premium baggy cut trousers crafted for the modern man. Perfect blend of comfort and style.',
-    shipping: '2-3 Business Days',
-    // NAYA SECTION ADDED YAHAN
-    colorImages: {
-      'black': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80',
-      'blue': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80',
-      'dark blue': 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80'
+/* ─── PRODUCT DATA FETCHING FROM CMS ─────────────────────── */
+let PRODUCTS = [];
+
+async function loadProducts() {
+  try {
+    const response = await fetch('data/products.json');
+    if (!response.ok) throw new Error("Could not load products data");
+    
+    const data = await response.json();
+    
+    // CMS list data ko normalize karna purane format mein
+    if (data && data.items) {
+      PRODUCTS = data.items.map(p => {
+        // CMS se colors array aayega
+        let mappedColors = p.colors || [];
+        
+        // CMS se colorImagesList aayega [{colorName: 'black', imgUrl: 'image.jpg'}]
+        // isko object {'black': 'image.jpg'} mein convert kar rahe hain taake shop.html na toote
+        let mappedColorImages = {};
+        if (p.colorImagesList) {
+          p.colorImagesList.forEach(c => {
+            mappedColorImages[c.colorName] = c.imgUrl;
+          });
+        }
+
+        return {
+          ...p,
+          colors: mappedColors,
+          colorImages: mappedColorImages
+        };
+      });
     }
-  },
-  {
-    id: 'buggy-tshirt',
-    name: 'Buggy T-Shirt',
-    category: 'men',
-    price: 2000,
-    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
-    sizes: ['S','M','L','XL'],
-    colors: ['black','white','blue'],
-    badge: 'New',
-    description: 'Oversized premium cotton t-shirt with a relaxed fit. Statement streetwear for every occasion.',
-    shipping: '2-3 Business Days',
-    // NAYA SECTION ADDED YAHAN
-    colorImages: {
-      'black': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
-      'white': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
-      'blue': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80'
+
+    // Products load hone ke baad agar hum shop page par hain toh render call karo
+    if (typeof renderProducts === 'function') {
+      renderProducts();
     }
-  },
-  {
-    id: 'nike-shoes',
-    name: 'Nike Shoes',
-    category: 'men',
-    price: 3500,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-    sizes: ['S','M','L','XL'],
-    colors: ['white','black'],
-    badge: 'Premium',
-    description: 'Authentic Nike sneakers combining iconic style with superior comfort and durability.',
-    shipping: '2-3 Business Days',
-    // NAYA SECTION ADDED YAHAN
-    colorImages: {
-      'white': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-      'black': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'
-    }
-  },
-  {
-    id: 'stripped-polo-shirt',
-    name: 'Stripped Half Zip Polo Shirts',
-    category: 'men',
-    price: 2800,
-    // main tasveer use green-cream wali images_1.png ki
-    image: 'assets/poloshirt.jpeg', 
-    sizes: ['S','M','L','XL'],
-    colors: ['green-cream','brown-cream','olive-cream','beige-grey'],
-    badge: 'New Arrival',
-    description: 'Premium striped knit polo shirt with a stylish half-zip closure. Comfortable and versatile for any casual outing.',
-    shipping: '2-3 Business Days',
-    // NAYE PRODUCTS KE COLOR IMAGES BHI ADD KAR DIYE HAIN 👇
-    colorImages: {
-      'green-cream': 'assets/poloshirt.jpeg', // image_1.png link
-      'brown-cream': 'assets/poloshirt2.jpeg', // image_2.png link
-      'olive-cream': 'assets/poloshirt3.jpeg', // image_3.png link
-      'beige-grey': 'assets/poloshirt4.jpeg'  // image_4.png link
-    }
+    
+  } catch (error) {
+    console.error("Products Loading Error:", error);
   }
-];
+}
 
 /* ─── CART UTILITIES ────────────────────────────────────────── */
 
@@ -274,7 +240,7 @@ function initRevealAnimations() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+        // observer.unobserve(entry.target); // Optional: uncomment if you want animation only once
       }
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
@@ -310,6 +276,7 @@ function setActiveNav() {
 
 /* ─── INIT ALL ──────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  loadProducts(); // Load products from JSON first
   updateCartBadge();
   initSearch();
   initHeaderScroll();
@@ -318,18 +285,3 @@ document.addEventListener('DOMContentLoaded', () => {
   initParallax();
   setActiveNav();
 });
-
-// Purana hardcoded products array delete kar dena
-async function loadProducts() {
-    try {
-        // Hum Netlify se saare products ki list mangwayenge
-        // Shuruwat mein testing ke liye tum local storage ya direct fetch use kar sakte ho
-        // Lekin professional tareeqa ye hai ke hum 'content/products' ka data parhen.
-        
-        console.log("CMS data loading...");
-        // Filhal ke liye agar tumne CMS mein 2-3 products dal diye hain,
-        // Toh wo GitHub pe file ban chuki hogi.
-    } catch (e) {
-        console.log("Error loading CMS products");
-    }
-}
