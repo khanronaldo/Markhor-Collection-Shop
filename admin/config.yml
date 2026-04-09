@@ -18,10 +18,10 @@ collections:
             identifier_field: name
             widget: list
             fields:
-              - { label: "Product ID (e.g., buggy-pent)", name: "id", widget: "string" }
               - { label: "Name", name: "name", widget: "string" }
               - { label: "Category", name: "category", widget: "select", options: ["men", "women", "kids"] }
               - { label: "Price", name: "price", widget: "number", value_type: "int" }
+              - { label: "Main Image", name: "image", widget: "image" }
               - { label: "Main Image", name: "image", widget: "image" }
               - { label: "Sizes", name: "sizes", widget: "select", multiple: true, options: ["S", "M", "L", "XL"] }
               - { label: "Colors Available", name: "colors", widget: "list", field: {label: "Color", name: "color", widget: "string"} }
@@ -35,5 +35,3 @@ collections:
                 fields:
                   - { label: "Color Name (must match exactly)", name: "colorName", widget: "string" }
                   - { label: "Image", name: "imgUrl", widget: "image" }
-
-                  

@@ -575,7 +575,7 @@
   <script src="main.js"></script>
   <script>
     /* ============================================================
-        UPDATED PRODUCT DETAIL PAGE JAVASCRIPT (JSON FETCH)
+       UPDATED PRODUCT DETAIL PAGE JAVASCRIPT (NAME-BASED FETCH)
        ============================================================ */
 
     const COLOR_MAP = {
@@ -599,46 +599,56 @@
     let quantity = 1;
 
     function loadProduct() {
-  const params = new URLSearchParams(window.location.search);
-  const productId = params.get('id'); // URL se ID uthayi
+      const params = new URLSearchParams(window.location.search);
+      // Ab URL se ID ki jagah "name" uthayenge
+      const productNameURL = params.get('name'); 
 
-  fetch('data/products.json')
-    .then(response => response.json())
-    .then(data => {
-      ALL_PRODUCTS = data.items;
+      fetch('data/products.json')
+        .then(response => response.json())
+        .then(data => {
+          ALL_PRODUCTS = data.items;
 
-      // 1. Pehle ID se dhoondo
-      currentProduct = ALL_PRODUCTS.find(p => p.id === productId);
+          // 1. Name se dhoondo
+          if (productNameURL) {
+             currentProduct = ALL_PRODUCTS.find(p => p.name === productNameURL);
+             
+             // Agar exact match na ho to case-insensitive match try karo
+             if (!currentProduct) {
+                 currentProduct = ALL_PRODUCTS.find(p => p.name.toLowerCase() === productNameURL.toLowerCase());
+             }
+          }
 
-      // 2. Agar ID se nahi mila, toh NAME se dhoondo (Case insensitive)
-      if (!currentProduct) {
-        currentProduct = ALL_PRODUCTS.find(p => 
-          p.name.toLowerCase().replace(/\s+/g, '-') === productId.toLowerCase() ||
-          p.name === productId
-        );
-      }
+          // 2. Agar ab bhi nahi mila, toh jo bhi pehla product hai wo dikha do (Blank page se behtar hai)
+          if (!currentProduct && ALL_PRODUCTS.length > 0) {
+            currentProduct = ALL_PRODUCTS[0];
+          }
 
-      // 3. Agar ab bhi nahi mila, toh jo bhi pehla product hai wo dikha do (Blank page se behtar hai)
-      if (!currentProduct && ALL_PRODUCTS.length > 0) {
-        currentProduct = ALL_PRODUCTS[0];
-      }
+          if (!currentProduct) {
+            document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:4rem;color:var(--text-light);grid-column: 1 / -1;"><h2>No products available.</h2></div>';
+            return;
+          }
 
-      if (!currentProduct) {
-        document.getElementById('productGrid').innerHTML = '<h2>No products available.</h2>';
-        return;
-      }
+          // Setup initial selections
+          selectedSize = (currentProduct.sizes && currentProduct.sizes.length > 0) ? currentProduct.sizes[0] : '';
+          selectedColor = (currentProduct.colors && currentProduct.colors.length > 0) ? currentProduct.colors[0] : '';
+          
+          document.title = `${currentProduct.name} – Markhor Collections`;
+          document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
 
-      // Render functions
-      renderProductDetail();
-      renderSpecifications();
-      renderRelatedProducts();
-    });
-}
+          // Render functions
+          renderProductDetail();
+          renderSpecifications();
+          renderRelatedProducts();
+        })
+        .catch(err => {
+            console.error("Error loading product: ", err);
+            document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:4rem;color:var(--text-light);grid-column: 1 / -1;"><h2>Error loading product details.</h2></div>';
+        });
+    }
 
     function renderProductDetail() {
       const grid = document.getElementById('productGrid');
       
-      // Check if variables exist to prevent errors
       const sizesHtml = currentProduct.sizes ? currentProduct.sizes.map(s => `
         <button class="size-btn ${s === selectedSize ? 'selected' : ''}" 
           data-size="${s}" onclick="selectSize('${s}')">${s}</button>
@@ -717,7 +727,6 @@
       });
     }
 
-    /* ── UPDATED COLOR SELECTION (WITH CMS JSON FORMAT) ── */
     function selectColor(color) {
       selectedColor = color;
       
@@ -727,7 +736,6 @@
 
       const mainImg = document.getElementById('productMainImg');
       
-      // JSON mein humne 'colorImagesList' rakha tha Netlify ke liye
       if (mainImg && currentProduct.colorImagesList) {
         const colorData = currentProduct.colorImagesList.find(c => c.colorName === color);
         if (colorData && colorData.imgUrl) {
@@ -783,11 +791,10 @@
 
     function renderRelatedProducts() {
       const grid = document.getElementById('relatedGrid');
-      // Ab hum naye ALL_PRODUCTS array se related items uthayenge
-      const related = ALL_PRODUCTS.filter(p => p.id !== currentProduct.id).slice(0, 4);
+      const related = ALL_PRODUCTS.filter(p => p.name !== currentProduct.name).slice(0, 4);
       grid.innerHTML = related.map(p => `
         <div class="product-card">
-          <a href="product.html?id=${p.id}">
+          <a href="product.html?name=${encodeURIComponent(p.name)}">
             <div class="card-img-wrap" style="aspect-ratio:3/4; overflow:hidden;">
               <img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; object-position:top;">
             </div>
@@ -802,7 +809,7 @@
 
     // Call function to start loading
     loadProduct();
-  </script>
+</script>
 
 </body>
 </html>
