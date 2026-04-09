@@ -1,0 +1,21 @@
+backend:
+  name: git-gateway
+  branch: main # Agar tumhari branch ka naam 'master' hai toh wo likho
+
+media_folder: "assets/products" # Images yahan save hongi
+public_folder: "/assets/products"
+
+collections:
+  - name: "products"
+    label: "Products"
+    folder: "content/products" # Naye products ki files yahan banengi
+    create: true
+    slug: "{{slug}}"
+    format: "json" # Hum JSON format use karenge taake JS se parhna asan ho
+    fields:
+      - { label: "Product Name", name: "title", widget: "string" }
+      - { label: "Price (Rs)", name: "price", widget: "number" }
+      - { label: "Main Image", name: "image", widget: "image" }
+      - { label: "Category", name: "category", widget: "select", options: ["Men", "Women", "Kids"] }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "In Stock", name: "in_stock", widget: "boolean", default: true }
