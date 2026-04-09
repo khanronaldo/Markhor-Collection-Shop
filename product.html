@@ -575,7 +575,7 @@
   <script src="main.js"></script>
   <script>
     /* ============================================================
-        PRODUCT DETAIL PAGE JAVASCRIPT
+        UPDATED PRODUCT DETAIL PAGE JAVASCRIPT (JSON FETCH)
        ============================================================ */
 
     const COLOR_MAP = {
@@ -585,9 +585,14 @@
       'dark blue': '#1a2d6e',
       'gray': '#888888',
       'cream': '#f5edd8',
-      'navy': '#000080'
+      'navy': '#000080',
+      'green-cream': '#8f9779',
+      'brown-cream': '#8b4513',
+      'olive-cream': '#556b2f',
+      'beige-grey': '#f5f5dc'
     };
 
+    let ALL_PRODUCTS = []; // Naya global array json ke liye
     let currentProduct = null;
     let selectedSize = '';
     let selectedColor = '';
@@ -597,26 +602,53 @@
       const params = new URLSearchParams(window.location.search);
       const productId = params.get('id');
 
-      currentProduct = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0];
+      // Ab hum JSON file se data mangwa rahe hain
+      fetch('data/products.json')
+        .then(response => response.json())
+        .then(data => {
+          ALL_PRODUCTS = data.items;
+          
+          currentProduct = ALL_PRODUCTS.find(p => p.id === productId) || ALL_PRODUCTS[0];
 
-      if (!currentProduct) {
-        document.getElementById('productGrid').innerHTML = '<p>Product not found. <a href="shop.html">Back to Shop</a></p>';
-        return;
-      }
+          if (!currentProduct) {
+            document.getElementById('productGrid').innerHTML = '<p>Product not found. <a href="shop.html">Back to Shop</a></p>';
+            return;
+          }
 
-      selectedSize = currentProduct.sizes[0];
-      selectedColor = currentProduct.colors[0];
+          // Sizes aur colors handle karne ke liye (agar empty hon)
+          selectedSize = (currentProduct.sizes && currentProduct.sizes.length > 0) ? currentProduct.sizes[0] : '';
+          selectedColor = (currentProduct.colors && currentProduct.colors.length > 0) ? currentProduct.colors[0] : '';
 
-      document.title = `${currentProduct.name} – Markhor Collections`;
-      document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
+          document.title = `${currentProduct.name} – Markhor Collections`;
+          document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
 
-      renderProductDetail();
-      renderSpecifications();
-      renderRelatedProducts();
+          renderProductDetail();
+          renderSpecifications();
+          renderRelatedProducts();
+        })
+        .catch(error => {
+          console.error("Error fetching product:", error);
+          document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:4rem;color:var(--text-light);">Error loading product details. Please try again.</div>';
+        });
     }
 
     function renderProductDetail() {
       const grid = document.getElementById('productGrid');
+      
+      // Check if variables exist to prevent errors
+      const sizesHtml = currentProduct.sizes ? currentProduct.sizes.map(s => `
+        <button class="size-btn ${s === selectedSize ? 'selected' : ''}" 
+          data-size="${s}" onclick="selectSize('${s}')">${s}</button>
+      `).join('') : '';
+
+      const colorsHtml = currentProduct.colors ? currentProduct.colors.map(c => `
+        <button class="color-btn ${c === selectedColor ? 'selected' : ''}" 
+          data-color="${c}" onclick="selectColor('${c}')">
+          <span class="color-dot" style="background:${COLOR_MAP[c] || c}; border: 1px solid #ccc;"></span>
+          ${c}
+        </button>
+      `).join('') : '';
+
       grid.innerHTML = `
         <div class="product-image-section reveal-left">
           <div class="product-main-image" id="productImageWrap">
@@ -634,21 +666,12 @@
 
           <span class="option-label">size</span>
           <div class="size-options" id="sizeOptions">
-            ${currentProduct.sizes.map(s => `
-              <button class="size-btn ${s === selectedSize ? 'selected' : ''}" 
-                data-size="${s}" onclick="selectSize('${s}')">${s}</button>
-            `).join('')}
+            ${sizesHtml}
           </div>
 
           <span class="option-label">colour</span>
           <div class="color-options" id="colorOptions">
-            ${currentProduct.colors.map(c => `
-              <button class="color-btn ${c === selectedColor ? 'selected' : ''}" 
-                data-color="${c}" onclick="selectColor('${c}')">
-                <span class="color-dot" style="background:${COLOR_MAP[c] || c};"></span>
-                ${c}
-              </button>
-            `).join('')}
+            ${colorsHtml}
           </div>
 
           <div class="product-divider"></div>
@@ -674,7 +697,7 @@
 
           <div class="product-meta">
             <span><i class="fas fa-file-contract"></i> <a href="#">Terms and Conditions</a></span>
-            <span><i class="fas fa-truck"></i> Shipping: ${currentProduct.shipping || 'Standard Delivery'}</span>
+            <span><i class="fas fa-truck"></i> Shipping: ${currentProduct.shipping || '2-3 Business Days'}</span>
           </div>
 
           <div class="product-divider"></div>
@@ -691,24 +714,26 @@
       });
     }
 
-    /* ── UPDATED COLOR SELECTION (WITH IMAGE CHANGER) ── */
+    /* ── UPDATED COLOR SELECTION (WITH CMS JSON FORMAT) ── */
     function selectColor(color) {
       selectedColor = color;
       
-      // Update Button UI
       document.querySelectorAll('.color-btn').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.color === color);
       });
 
-      // Change Image Logic
       const mainImg = document.getElementById('productMainImg');
-      if (mainImg && currentProduct.colorImages && currentProduct.colorImages[color]) {
-        // Simple fade effect
-        mainImg.style.opacity = '0.3';
-        setTimeout(() => {
-          mainImg.src = currentProduct.colorImages[color];
-          mainImg.style.opacity = '1';
-        }, 150);
+      
+      // JSON mein humne 'colorImagesList' rakha tha Netlify ke liye
+      if (mainImg && currentProduct.colorImagesList) {
+        const colorData = currentProduct.colorImagesList.find(c => c.colorName === color);
+        if (colorData && colorData.imgUrl) {
+          mainImg.style.opacity = '0.3';
+          setTimeout(() => {
+            mainImg.src = colorData.imgUrl;
+            mainImg.style.opacity = '1';
+          }, 150);
+        }
       }
     }
 
@@ -741,17 +766,22 @@
       const section = document.getElementById('specificationsSection');
       const table = document.getElementById('specsTable');
       section.style.display = 'block';
+      
+      const sizes = currentProduct.sizes ? currentProduct.sizes.join(', ') : 'N/A';
+      const colors = currentProduct.colors ? currentProduct.colors.join(', ') : 'N/A';
+
       table.innerHTML = `
-        <tr><td>Size</td><td>${currentProduct.sizes.join(', ')}</td></tr>
-        <tr><td>Colour</td><td>${currentProduct.colors.join(', ')}</td></tr>
+        <tr><td>Size</td><td>${sizes}</td></tr>
+        <tr><td>Colour</td><td>${colors}</td></tr>
         <tr><td>Category</td><td>${currentProduct.category || 'Men'}</td></tr>
-        <tr><td>Shipping</td><td>${currentProduct.shipping || 'Fast Delivery'}</td></tr>
+        <tr><td>Shipping</td><td>${currentProduct.shipping || '2-3 Business Days'}</td></tr>
       `;
     }
 
     function renderRelatedProducts() {
       const grid = document.getElementById('relatedGrid');
-      const related = PRODUCTS.filter(p => p.id !== currentProduct.id).slice(0, 4);
+      // Ab hum naye ALL_PRODUCTS array se related items uthayenge
+      const related = ALL_PRODUCTS.filter(p => p.id !== currentProduct.id).slice(0, 4);
       grid.innerHTML = related.map(p => `
         <div class="product-card">
           <a href="product.html?id=${p.id}">
@@ -767,7 +797,9 @@
       `).join('');
     }
 
+    // Call function to start loading
     loadProduct();
   </script>
+  
 </body>
 </html>
