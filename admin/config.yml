@@ -15,6 +15,7 @@ collections:
         fields:
           - name: items
             label: All Products
+            identifier_field: name
             widget: list
             fields:
               - { label: "Product ID (e.g., buggy-pent)", name: "id", widget: "string" }
@@ -35,4 +36,4 @@ collections:
                   - { label: "Color Name (must match exactly)", name: "colorName", widget: "string" }
                   - { label: "Image", name: "imgUrl", widget: "image" }
 
-                  identifier_field: name
+                  
